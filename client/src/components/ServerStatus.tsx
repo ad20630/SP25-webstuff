@@ -8,8 +8,8 @@ interface ServerCheck {
 
 const ServerStatus: React.FC = () => {
   const [serverChecks, setServerChecks] = useState<ServerCheck[]>([
-    { port: 3001, status: 'checking' },
     { port: 3000, status: 'checking' },
+    { port: 3001, status: 'checking' },
     { port: 5000, status: 'checking' },
     { port: 8080, status: 'checking' }
   ]);
@@ -17,14 +17,6 @@ const ServerStatus: React.FC = () => {
   const [checkingComplete, setCheckingComplete] = useState(false);
 
   useEffect(() => {
-    // Try the proxy health check first
-    fetch('/health').then(res => {
-      console.log('Dev server health check:', res.status);
-    }).catch(err => {
-      console.error('Dev server health check failed:', err);
-    });
-
-    // Check each port
     const checkPorts = async () => {
       const results = [...serverChecks];
       let foundServer = false;
@@ -34,7 +26,7 @@ const ServerStatus: React.FC = () => {
         try {
           console.log(`Checking server on port ${check.port}...`);
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+          const timeoutId = setTimeout(() => controller.abort(), 3000);
 
           const response = await fetch(`http://localhost:${check.port}/api/health`, {
             method: 'HEAD',
@@ -43,26 +35,27 @@ const ServerStatus: React.FC = () => {
           
           clearTimeout(timeoutId);
           
-          console.log(`Port ${check.port} response:`, response.status);
-          results[i] = {
-            ...check,
-            status: 'online'
-          };
-          
-          foundServer = true;
-          
-          // If this is the first successful port, select it
-          if (selectedPort === null) {
-            setSelectedPort(check.port);
+          if (response.ok) {
+            console.log(`Port ${check.port} response:`, response.status);
+            results[i] = {
+              ...check,
+              status: 'online'
+            };
             
-            // Update the API_URL in localStorage for the api.ts service to use
-            localStorage.setItem('API_SERVER_PORT', check.port.toString());
+            foundServer = true;
+            
+            if (selectedPort === null) {
+              setSelectedPort(check.port);
+              localStorage.setItem('API_SERVER_PORT', check.port.toString());
+            }
+          } else {
+            throw new Error(`Server returned status ${response.status}`);
           }
         } catch (err) {
           console.log(`Port ${check.port} check failed:`, err);
           results[i] = {
             ...check,
-            status: 'offline', 
+            status: 'offline',
             error: err instanceof Error ? err.message : 'Unknown error'
           };
         }
