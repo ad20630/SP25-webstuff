@@ -38,6 +38,7 @@ div.element-style{
   background-color: #333;
   color: white;
   bottom: 0;
+  text-align: center;
 }
 
 //contains menu and tabs as a whole
@@ -45,6 +46,8 @@ div.element-style{
   width: 30%;
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .grid-container {
@@ -76,30 +79,36 @@ div.element-style{
 
 //styling for file tabs on menu 
 .sidebar-controls {
-  height: 40%;
-  justify-content: center;
+  height: 100%;
+  justify-content: flex-start;
   z-index: 0; 
-  width: 20%; 
-  display:flex;
-  flex-direction:column;
+  width: 20%;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  padding: 10px 0;
+  border-right: 1px solid #444;
+  
 }
 
 //also styling for the file tabs for the menu
 .sidebar-control {
   background-color: #333;
-  width: 100%;  
-  height: 60px; //make relative using rem 
-  border-radius: 25px 0px 0px 25px; 
-  margin: 10px 0px 10px 0px;
+  width: 100%;
+  height: 60px;
+  border-radius: 0;
+  margin: 5px 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  transition:.5s ease-in;
+  justify-content: flex-start;
+  transition: 0.3s ease-in;
+  padding: 0 15px;
+  border-left: 3px solid transparent;
   &:hover{
-      background-color: aqua;
-      cursor: pointer;
-      width: max(255%, 210px);    
+    background-color: aqua;
+    cursor: pointer;
+    transform: scale(1.02);
+    border-left: 3px solid white;
   }
 }
 
