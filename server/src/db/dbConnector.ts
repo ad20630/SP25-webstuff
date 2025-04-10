@@ -6,10 +6,10 @@
  * see https://github.com/mysqljs/mysql for details on mysql js library
  */
 
-import mysql from 'mysql'
-import dotenv from 'dotenv'
+import mysql = require('mysql');
+const dotenv = require('dotenv');
 
-dotenv.config()
+dotenv.config();
 
 export interface DBUser {
   id: number;
@@ -18,6 +18,28 @@ export interface DBUser {
   name: string;
   created_at: Date;
   updated_at: Date;
+}
+
+// Add type definitions for mysql
+interface MysqlPool {
+  createPool(config: mysql.PoolConfig): mysql.Pool;
+}
+
+interface MysqlConnection {
+  release(): void;
+}
+
+interface MysqlError extends Error {
+  code?: string;
+  errno?: number;
+  sqlState?: string;
+  sqlMessage?: string;
+}
+
+interface MysqlQueryResult {
+  insertId?: number;
+  affectedRows?: number;
+  changedRows?: number;
 }
 
 class DBConnector {
@@ -34,7 +56,7 @@ class DBConnector {
     });
 
     // Test the connection
-    this.pool.getConnection((err, connection) => {
+    this.pool.getConnection((err: mysql.MysqlError | null, connection: mysql.PoolConnection) => {
       if (err) {
         console.error('Database connection error:', err);
       } else {
@@ -53,7 +75,7 @@ class DBConnector {
 
   private query(sql: string, params?: any[]): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.pool.query(sql, params, (error, results) => {
+      this.pool.query(sql, params, (error: mysql.MysqlError | null, results: any[]) => {
         if (error) {
           console.error('Database query error:', error);
           reject(error);
@@ -96,7 +118,7 @@ class DBConnector {
 
   async close(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.pool.end(err => {
+      this.pool.end((err: mysql.MysqlError | null) => {
         if (err) reject(err);
         else resolve();
       });
