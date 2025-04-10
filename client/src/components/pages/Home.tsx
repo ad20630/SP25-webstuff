@@ -5,7 +5,7 @@ type Props = {}
 
 const Home = (props: Props) => {
   return (
-    <Navigate to={"app/editor"}/>
+    <Navigate to="/app/editor" replace />
   )
 }
 
