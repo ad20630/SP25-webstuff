@@ -1,14 +1,14 @@
 import { RouteObject } from "react-router";
-import AppPage from "../../components/pages/app/AppPage"
+import AppPage from "../../components/pages/app/AppPage";
 
-export const AppRoutes:RouteObject[] = [
+export const AppRoutes: RouteObject[] = [
   {
     path: "app",
-    children:[
+    children: [
       {
         path: "editor",
         element: <AppPage />
       }
     ]
   }
-]
+];
