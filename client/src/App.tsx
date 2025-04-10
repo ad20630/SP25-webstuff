@@ -78,7 +78,7 @@ const App: React.FC = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="App">
+      <div className="app-container">
         {/* Debug button in corner */}
         <button 
           className="debug-toggle" 
