@@ -6,7 +6,29 @@ interface LogoutButtonProps {
 }
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({ handleLogout }) => {
-  return <button onClick={handleLogout}>Logout</button>;
+  return (
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      margin: '10px 0' 
+    }}>
+      <button 
+        onClick={handleLogout}
+        style={{
+          padding: '8px 16px',
+          backgroundColor: '#f44336',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '14px',
+          fontWeight: 'bold'
+        }}
+      >
+        Logout
+      </button>
+    </div>
+  );
 };
 
 export default LogoutButton;
