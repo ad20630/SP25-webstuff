@@ -1,9 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { createClient, Photo } from "pexels";
 import "../../styles/sidebar.scss";
+import { useDraggable } from "state/dragAndDrop/hooks/useDraggable";
 
 const apikey = process.env.REACT_APP_PEXELS_API_KEY; // Use the Pexels API key
 const client = createClient(apikey || "");  // Pass the API key to the client
+
+interface DraggableImageProps {
+  img: Photo;
+  onSelect: (url: string) => void;
+}
+
+const DraggableImage: React.FC<DraggableImageProps> = ({ img, onSelect }) => {
+  const { dragRef, startDrag } = useDraggable({
+    type: "image",
+    url: img.src.medium,
+    alt: img.alt || "No description available"
+  });
+
+  return (
+    <div className="image-container">
+      <img
+        src={img.src.medium}
+        alt={img.alt || "No description available"}
+        onClick={() => onSelect(img.src.medium)}
+        onMouseDown={startDrag}
+        ref={dragRef as React.RefObject<HTMLImageElement>}
+        className="gallery-image"
+        style={{ cursor: "grab" }}
+      />
+    </div>
+  );
+};
 
 const ImageGallery = ({ onSelect }: { onSelect: (url: string) => void }) => {
   const [images, setImages] = useState<Photo[]>([]);
@@ -76,14 +104,7 @@ const ImageGallery = ({ onSelect }: { onSelect: (url: string) => void }) => {
       
       <div className="grid">
         {images.map((img) => (
-          <div key={img.id} className="image-container">
-            <img
-              src={img.src.medium}
-              alt={img.alt || "No description available"}
-              onClick={() => onSelect(img.src.medium)}
-              className="gallery-image"
-            />
-          </div>
+          <DraggableImage key={img.id} img={img} onSelect={onSelect} />
         ))}
       </div>
 
