@@ -5,17 +5,18 @@
  */
 
 //#region imports
+import type { Express, Request, Response, NextFunction } from 'express-serve-static-core';
 const express = require('express');
-import cors from 'cors';
-import { authRouter } from './auth/authRouter';
-import dotenv from 'dotenv';
-
+const cors = require('cors');
+const dotenv = require('dotenv');
+const path = require('path');
+const { authRouter } = require('./auth/authRouter');
 //#endregion
 
 // Load environment variables
 dotenv.config();
 
-const app = express();
+const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
 // Configure middleware
@@ -35,11 +36,21 @@ app.use(cors(corsOptions));
 // Enable pre-flight requests for all routes
 app.options('*', cors(corsOptions));
 
+// Health check endpoint
+app.get('/api/health', (req: Request, res: Response) => {
+  res.status(200).send('OK');
+});
+
+// Root route handler
+app.get('/', (req: Request, res: Response) => {
+  res.send('Server is running');
+});
+
 // Mount auth router
 app.use('/api/auth', authRouter);
 
 // Error handling middleware
-app.use((err: any, req: any, res: any, next: any) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Server error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });
