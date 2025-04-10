@@ -1,12 +1,12 @@
 // API service to handle all server requests
 
 // Use the port discovered by ServerStatus component, or fall back to the proxy
-const getApiBaseUrl = (): string => {
-  const serverPort = localStorage.getItem('API_SERVER_PORT');
-  if (serverPort) {
-    return `http://localhost:${serverPort}/api`;
+const getApiBaseUrl = () => {
+  // Check if we're in development mode
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:3000/api';
   }
-  return '/api'; // Use relative URL with proxy
+  return '/api'; // For production
 };
 
 // When a direct connection fails, try the proxy route
@@ -16,76 +16,34 @@ const getApiProxyUrl = (): string => {
 
 // Helper function to handle API responses with timeout
 const handleResponse = async (response: Response) => {
-  console.log(`API Response: ${response.status} ${response.statusText}`);
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('API Response:', response.status, errorText);
+    throw new Error(`Server error (${response.status}): ${errorText}`);
+  }
   
   try {
-    // Check if response has JSON content
-    const contentType = response.headers.get('content-type');
-    let data: any = null;
-    
-    if (contentType && contentType.includes('application/json')) {
-      try {
-        data = await response.json();
-      } catch (jsonError) {
-        console.error('Error parsing JSON response:', jsonError);
-        // For a 500 error, if we can't parse JSON, create an error object
-        if (response.status === 500) {
-          throw { 
-            status: response.status, 
-            data: { error: 'Server encountered an error. Check that all required fields are provided.' } 
-          };
-        }
-        throw jsonError;
-      }
-    } else {
-      // Handle non-JSON response
-      const text = await response.text();
-      console.error('Non-JSON response:', text);
-      
-      // If it's a 500 error, create a more helpful error
-      if (response.status === 500) {
-        throw { 
-          status: response.status, 
-          data: { error: 'Server error: ' + (text || 'Internal Server Error') } 
-        };
-      }
-      
-      throw new Error(`Server returned a non-JSON response: ${text}`);
-    }
-
-    if (!response.ok) {
-      throw { status: response.status, data };
-    }
-    
-    return data;
-  } catch (error: any) {
-    // Ensure we're always throwing an object with status and data
-    if (error.status && (error.data || error.message)) {
-      throw error;
-    }
-    
-    console.error('Error in handleResponse:', error);
-    throw { 
-      status: response.status, 
-      data: { error: error.message || 'Unknown error occurred' } 
-    };
+    return await response.json();
+  } catch (error) {
+    console.error('Error parsing JSON response:', error);
+    throw new Error('Invalid server response format');
   }
 };
 
 // Fetch with timeout
 const fetchWithTimeout = async (url: string, options: RequestInit, timeout = 5000) => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  const id = setTimeout(() => controller.abort(), timeout);
   
   try {
     const response = await fetch(url, {
       ...options,
       signal: controller.signal
     });
-    clearTimeout(timeoutId);
+    clearTimeout(id);
     return response;
   } catch (error) {
-    clearTimeout(timeoutId);
+    clearTimeout(id);
     throw error;
   }
 };
@@ -125,7 +83,7 @@ export const authApi = {
   login: async (email: string, password: string) => {
     try {
       console.log('Login request with email:', email);
-      const response = await fetchWithFallback('/auth/login', {
+      const response = await fetchWithTimeout(`${getApiBaseUrl()}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -135,12 +93,12 @@ export const authApi = {
       return await handleResponse(response);
     } catch (error) {
       console.error('Login request failed:', error);
-      
-      // If it's an AbortError, provide a clearer message
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        throw new Error('Server connection timed out. Please try again or check if the server is running.');
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Server connection timed out. Please check if the server is running.');
+        }
+        throw new Error(`Login failed: ${error.message}`);
       }
-      
       throw error;
     }
   },
@@ -149,21 +107,15 @@ export const authApi = {
     try {
       console.log('Registration request with email:', email, 'and name:', name);
       
-      // Try alternative payload formats - the server might expect a different structure
-      // Create a more comprehensive payload with multiple field combinations
       const payload = {
         email: email,
         password: password,
-        name: name,
-        username: email,  // Some servers use username instead of email
-        fullName: name,   // Some servers use fullName instead of name
-        displayName: name, // Another possible field name
-        confirmPassword: password // Some servers require this
+        name: name
       };
       
       console.log('Using registration payload:', payload);
       
-      const response = await fetchWithFallback('/auth/register', {
+      const response = await fetchWithTimeout(`${getApiBaseUrl()}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -173,12 +125,12 @@ export const authApi = {
       return await handleResponse(response);
     } catch (error) {
       console.error('Registration request failed:', error);
-      
-      // If it's an AbortError, provide a clearer message
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        throw new Error('Server connection timed out. Please try again or check if the server is running.');
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Server connection timed out. Please check if the server is running.');
+        }
+        throw new Error(`Registration failed: ${error.message}`);
       }
-      
       throw error;
     }
   },
@@ -186,7 +138,9 @@ export const authApi = {
   // Add a simple API health check method
   checkHealth: async () => {
     try {
-      const response = await fetchWithTimeout(`${getApiBaseUrl()}/health`, { method: 'HEAD' }, 3000);
+      const response = await fetchWithTimeout(`${getApiBaseUrl()}/health`, { 
+        method: 'HEAD' 
+      }, 3000);
       return response.ok;
     } catch (error) {
       console.error('Health check failed:', error);
