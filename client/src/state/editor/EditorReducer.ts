@@ -32,6 +32,7 @@ export enum ActionType {
   DELETE_ELEMENT = "DELETE_ELEMENT",  
   COPY_ELEMENT = "COPY_ELEMENT",
   ADD_ELEMENT = "ADD_ELEMENT",
+  ADD_COLUMN = "ADD_COLUMN",
   RESIZE_ELEMENT = "RESIZE_ELEMENT",
 
   VIEW_CODE = "VIEW_CODE",
@@ -71,6 +72,7 @@ export type EditorAction =
   | { type: ActionType.ATTRIBUTE_CHANGED; target:"style"|"attributes"; attribute:string; newValue:string }
   | { type: ActionType.LOAD_STATE; payload: EditorState }
   | { type: ActionType.ADD_ELEMENT; elementId: string}
+  | { type: ActionType.ADD_COLUMN; elementId: string}
   | { type: ActionType.RESIZE_ELEMENT; elementId: string; width: number; height: number }
   | { type: ActionType.UNDO }
   | { type: ActionType.REDO }
@@ -100,13 +102,12 @@ export type DropTargetData = {
 
 // Define a reducer to manage the state of the editor
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
+  let newState = state;
+  
   // Handle undo/redo actions first
   if (action.type === ActionType.UNDO || action.type === ActionType.REDO) {
     return handleUndoRedoAction(state, action);
   }
-
-  // For all other actions, create a new state
-  let newState: EditorState;
 
   // Group actions for action handler delegation //
   const MouseMovementActions = [
@@ -148,37 +149,127 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     ActionType.RESIZE_ELEMENT
   ]
 
-  if(MouseMovementActions.includes(action.type)){
+  if (MouseMovementActions.includes(action.type)) {
     newState = handleMouseMovementAction(state, action);
-  } else if(DragAndDropActions.includes(action.type)){
+  } else if (DragAndDropActions.includes(action.type)) {
     newState = handleDragAndDropAction(state, action);
-  } else if(DataFetchingActions.includes(action.type)){
+  } else if (DataFetchingActions.includes(action.type)) {
     newState = handleDataFetchingAction(state, action);
-  } else if(FocusedElementActions.includes(action.type)){
+  } else if (FocusedElementActions.includes(action.type)) {
     newState = handleFocusedElementAction(state, action);
-  } else if(DeleteElementActions.includes(action.type)){
+  } else if (DeleteElementActions.includes(action.type)) {
     newState = handleDeleteAction(state, action);
-  } else if(CopyElementActions.includes(action.type)){
+  } else if (CopyElementActions.includes(action.type)) {
     newState = handleCopyAction(state, action);
-  } else if(LoadStateActions.includes(action.type)){
+  } else if (LoadStateActions.includes(action.type)) {
     newState = handleLoadStateAction(state, action);
-  } else if(action.type === ActionType.ADD_ELEMENT){
-    newState = handleAddAction(state, action);
-  } else if(ResizeElementActions.includes(action.type)){
+  } else if (ResizeElementActions.includes(action.type)) {
     newState = handleResizeAction(state, action);
-  } else {
-    return state;
+  } else if (action.type === ActionType.ADD_COLUMN) {
+    const { elementId } = action;
+    const { section, index } = parseId(elementId);
+    const container = state[section].html.nodes[index];
+    
+    if (container && container.metadata?.childDirection === "horizontal") {
+      // Create a new column
+      const newColumn: StorableHtmlNode = {
+        element: "div",
+        attributes: {
+          className: {
+            value: "vertical",
+            readonly: true,
+            input: {
+              type: "text",
+              displayName: "Class Name",
+              tooltip: "This cannot be changed."
+            }
+          }
+        },
+        style: {
+          "background-color": {
+            value: "",
+            input: {
+              type: "color",
+              displayName: "Background Color"
+            }
+          },
+          "border-color": {
+            value: "",
+            input: {
+              type: "color",
+              displayName: "Border Color"
+            }
+          },
+          "border-style": {
+            value: "",
+            input: {
+              type: "select",
+              displayName: "Border Style",
+              options: [
+                { value: "none", text: "None" },
+                { value: "solid", text: "Solid" },
+                { value: "double", text: "Double" },
+                { value: "dotted", text: "Dotted" },
+                { value: "dashed", text: "Dashed" },
+                { value: "groove", text: "Grooved" },
+                { value: "ridge", text: "Ridged" },
+                { value: "inset", text: "Inset" },
+                { value: "outset", text: "Outset" },
+                { value: "hidden", text: "Hidden" }
+              ]
+            }
+          },
+          "border-width": {
+            value: "",
+            input: {
+              type: "select",
+              displayName: "Border Thickness",
+              options: [
+                { value: "0px", text: "Invisible" },
+                { value: "1px", text: "Extra Thin" },
+                { value: "2.5px", text: "Thin" },
+                { value: "3.5px", text: "Standard" },
+                { value: "4.5px", text: "Thick" },
+                { value: "6px", text: "Extra Thick" }
+              ]
+            }
+          }
+        },
+        children: [],
+        metadata: {
+          draggable: true,
+          droppable: true,
+          childDirection: "vertical" as const,
+          selectable: true
+        }
+      };
+
+      // Add the new column to the container's children
+      newState = { ...state };
+      if (newState[section]?.html?.nodes?.[index]?.children) {
+        newState[section].html.nodes[index].children.push(newState[section].html.nodes.length);
+        newState[section].html.nodes.push(newColumn);
+
+        // Update history
+        newState.history = [...newState.history.slice(0, newState.historyIndex + 1), newState];
+        newState.historyIndex++;
+      }
+    }
   }
 
   // Update history for all actions except undo/redo
-  const historyEntry = { ...newState, history: [], historyIndex: 0 };
-  const newHistory = [...state.history.slice(0, state.historyIndex + 1), historyEntry];
-  
-  return {
-    ...newState,
-    history: newHistory,
-    historyIndex: newHistory.length - 1
-  };
+  if (![ActionType.UNDO, ActionType.REDO].includes(action.type)) {
+    const historyEntry = { ...newState, history: [], historyIndex: 0 };
+    const newHistory = [...state.history.slice(0, state.historyIndex + 1), historyEntry];
+    
+    return {
+      ...newState,
+      history: newHistory,
+      historyIndex: newHistory.length - 1
+    };
+  }
+
+  return newState;
 }
 
  
