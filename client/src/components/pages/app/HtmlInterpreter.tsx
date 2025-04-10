@@ -213,6 +213,14 @@ export const HtmlInterpreter = (props: Props) => {
     editorDispatch({ type: ActionType.ADD_ELEMENT, elementId });
   };
 
+  const handleAddColumn = (elementId: string) => {
+    // Dispatch an action to add a new column
+    editorDispatch({ 
+      type: ActionType.ADD_COLUMN, 
+      elementId 
+    });
+  };
+
   const handleResizeStop = (elementId: string, width: number, height: number) => {
     // Dispatch a resize action
     editorDispatch({ 
@@ -308,7 +316,18 @@ export const HtmlInterpreter = (props: Props) => {
     </div>
   );
   
-
+  // Add column operations
+  const columnOperations = (
+    <div className="selected-element-ops">
+      <BsPlusSquareFill
+        className="icon add-item"
+        title="Add Column"
+        color="#1c274c"
+        onClick={() => handleAddColumn(id)}
+      />
+    </div>
+  );
+  
   // const className:string = content.attributes["class"]
   let Element: ReactElement;
 
@@ -551,6 +570,10 @@ export const HtmlInterpreter = (props: Props) => {
   const isHeading = content.element === "h1" || content.element === "h2" || content.element === "h3" || 
                     content.attributes.headingtype?.value;
   
+  // Check if this is a column container
+  const isColumnContainer = content.attributes.className?.value === "horizontal" && 
+                           content.metadata?.childDirection === "horizontal";
+  
   // Determine the appropriate resize handles based on the widget type
   const getResizeHandles = () => {
     if (isLayout) {
@@ -624,18 +647,32 @@ export const HtmlInterpreter = (props: Props) => {
               width: '100%', 
               height: isHeading ? 'auto' : '100%',
               overflow: isLayout ? 'auto' : 'visible',
-              cursor: 'move'
+              cursor: 'move',
+              position: 'relative'
             }
           },
-          children
+          <>
+            {children}
+            {isColumnContainer && editorState.selectedElementId === id && columnOperations}
+          </>
         )}
       </ResizableBox>
     );
   } else {
-    Element =
-      children.filter((c) => c !== null).length > 0
-        ? React.createElement(element, finalArgs, children)
-        : React.createElement(element, finalArgs);
+    Element = React.createElement(
+      element,
+      {
+        ...finalArgs,
+        style: { 
+          ...outputStyleObject, 
+          position: 'relative'
+        }
+      },
+      <>
+        {children}
+        {isColumnContainer && editorState.selectedElementId === id && columnOperations}
+      </>
+    );
   }
 
   useEffect(() => {
