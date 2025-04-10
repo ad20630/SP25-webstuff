@@ -1,6 +1,7 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import dbConnector, { DBUser } from '../db/dbConnector';
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { DBUser } = require('../db/dbConnector');
+const dbConnector = require('../db/dbConnector').default;
 
 // Generate JWT token function
 const generateAccessToken = (user: any) => {
@@ -51,8 +52,11 @@ export const registerUser = async (req: any, res: any) => {
       accessToken
     });
   } catch (error) {
-    console.error('Error in registerUser:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Registration error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: (error as Error).message 
+    });
   }
 };
 
