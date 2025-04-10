@@ -1,5 +1,5 @@
 const express = require('express');
-import { registerUser, loginUser, getUserDetails } from './authController';
+const { registerUser, loginUser, getUserDetails } = require('./authController');
 
 const router = express.Router();
 
@@ -8,4 +8,4 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/user/:id', getUserDetails);
 
-export const authRouter = router; 
+module.exports = { authRouter: router }; 
