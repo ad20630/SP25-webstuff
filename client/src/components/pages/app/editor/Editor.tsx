@@ -61,15 +61,15 @@ export const Editor = () => {
     <div id="editor-window" className="editor">
       <div className="editor-container">
         <div className="header-section">
-          <div className="tab">Header</div>
+          <div className="tab" style={{textAlign: "center"}}>Header</div>
           <Header content={data.header} />
         </div>
         <div className="body-section">
-          <div className="tab">Body</div>
+          <div className="tab" style={{textAlign: "center"}}>Body</div>
           <Body content={data.body} />
         </div>
         <div className="footer-section">
-          <div className="tab">Footer</div>
+          <div className="tab" style={{textAlign: "center"}}>Footer</div>
           <Footer content={data.footer} />
         </div>
       </div>
