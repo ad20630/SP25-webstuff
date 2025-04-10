@@ -2,6 +2,16 @@ import { HtmlObject } from "types/HtmlObject";
 import { ActionType, EditorAction, EditorState } from "../EditorReducer";
 import { sectionFromId, storableNodeToHtmlObject, removeNode, insertDroppedElement, parseId, getDropChildId, getAspectRatio } from "../Helpers";
 
+interface ImageDropPayload {
+    type: "image";
+    url: string;
+    alt: string;
+}
+
+function isImageDropPayload(payload: any): payload is ImageDropPayload {
+    return payload && typeof payload === "object" && payload.type === "image" && typeof payload.url === "string" && typeof payload.alt === "string";
+}
+
 export function handleDragAndDropAction(state: EditorState, action: EditorAction): EditorState {
     let newState: EditorState
     let dropped: HtmlObject;
@@ -16,11 +26,9 @@ export function handleDragAndDropAction(state: EditorState, action: EditorAction
             if (action.dragRootId) {
                 section = sectionFromId(action.dragRootId)
                 idNum = parseInt(action.dragRootId.split("-")[1])
-                //newState.widgets.push(storableNodeToHtmlObject(idNum, newState[section]))
                 newState[section] = { ...removeNode(idNum, newState[section]) }
 
                 newState.isDragging = true
-                //newState.draggedItemId = newState.widgets.length - 1
                 console.log(newState.widgets)
                 return { ...newState }
             }
@@ -55,40 +63,125 @@ export function handleDragAndDropAction(state: EditorState, action: EditorAction
             return { ...state }
         }
         case ActionType.DROP:
-
             newState = { ...state };
-            // Drop data will use the section in the hovered ID
             section = sectionFromId(action.targetId)
 
             const parent = document.getElementById(action.targetId)
 
-            dropped = structuredClone(action.payload)
-            dropped.html.nodes.forEach((node) => {
-                console.log("foo")
-                if (node.element === "img") {
-                    getAspectRatio(node.attributes.src.value).then((aspectRatio: number) => {
-                        if (parent) {
-                            const width = (parent.clientWidth * 0.90)
-                            console.log(width)
-                            node.attributes["height"] = {
-                                value: `${(width * (1 / aspectRatio)).toFixed(3)}`,
-                                input: {
-                                    type: "number"
+            // Handle image drops
+            if (isImageDropPayload(action.payload)) {
+                dropped = {
+                    metadata: {
+                        name: "Image",
+                        tooltip: "A place to upload and display an Image",
+                        type: "WIDGET",
+                        icon: "image-icon"
+                    },
+                    html: {
+                        nodes: [
+                            {
+                                element: "div",
+                                attributes: {
+                                    className: { value: "elementContainer" }
+                                },
+                                style: {
+                                    width: {
+                                        value: "300px",
+                                        input: {
+                                            type: "text",
+                                            displayName: "Width"
+                                        }
+                                    },
+                                    height: {
+                                        value: "200px",
+                                        input: {
+                                            type: "text",
+                                            displayName: "Height"
+                                        }
+                                    }
+                                },
+                                children: [1],
+                                metadata: {
+                                    draggable: true,
+                                    selectable: true,
+                                    resizable: true,
+                                    type: "WIDGET"
+                                }
+                            },
+                            {
+                                element: "img",
+                                attributes: {
+                                    className: {
+                                        value: "image",
+                                        readonly: true,
+                                        input: {
+                                            type: "text",
+                                            displayName: "Class Name",
+                                            tooltip: "This cannot be changed."
+                                        }
+                                    },
+                                    src: {
+                                        value: action.payload.url,
+                                        input: {
+                                            type: "text",
+                                            displayName: "File"
+                                        }
+                                    }
+                                },
+                                style: {
+                                    width: {
+                                        value: "100%",
+                                        input: {
+                                            type: "text",
+                                            displayName: "Width"
+                                        }
+                                    },
+                                    height: {
+                                        value: "100%",
+                                        input: {
+                                            type: "text",
+                                            displayName: "Height"
+                                        }
+                                    }
+                                },
+                                metadata: {
+                                    primary: true
                                 }
                             }
-                            node.attributes["width"] = {
-                                value: `${width.toFixed(3)}`,
-                                input: {
-                                    type: "number"
-                                }
+                        ]
+                    }
+                };
+
+                // Calculate aspect ratio and update dimensions
+                getAspectRatio(action.payload.url).then((aspectRatio: number) => {
+                    if (parent) {
+                        const width = (parent.clientWidth * 0.90);
+                        dropped.html.nodes[0].style.width.value = `${width.toFixed(3)}px`;
+                        dropped.html.nodes[0].style.height.value = `${(width * (1 / aspectRatio)).toFixed(3)}px`;
+                    }
+                });
+            } else {
+                dropped = structuredClone(action.payload);
+                dropped.html.nodes.forEach((node) => {
+                    if (node.element === "img") {
+                        getAspectRatio(node.attributes.src.value).then((aspectRatio: number) => {
+                            if (parent) {
+                                const width = (parent.clientWidth * 0.90);
+                                node.attributes["height"] = {
+                                    value: `${(width * (1 / aspectRatio)).toFixed(3)}`,
+                                    input: { type: "number" }
+                                };
+                                node.attributes["width"] = {
+                                    value: `${width.toFixed(3)}`,
+                                    input: { type: "number" }
+                                };
                             }
-                        }
-                    })
-                }
+                        });
+                    }
+                });
+            }
 
-            })
-
-            const calculatedIndex = getDropChildId(action.mouseState, newState, action.targetId)
+            const calculatedIndex = getDropChildId(action.mouseState, newState, action.targetId);
             newState = insertDroppedElement(calculatedIndex, newState, dropped, action.targetId);
 
             newState[section].metadata.preview = undefined;
@@ -107,6 +200,5 @@ export function handleDragAndDropAction(state: EditorState, action: EditorAction
 
         default:
             return state
-
     }
 }
