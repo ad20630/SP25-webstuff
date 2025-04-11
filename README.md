@@ -3,7 +3,7 @@ This is a working prototype of the WYSIWYG editor, a drag-and-drop solution to b
 
 ## Running the Program
 1. From a terminal located inside the main project directory, run **npm install**
-2. type **cd server** and hit enter
+2. Type **cd server** and hit enter
 3. Run **npm install** again, then run **npm run build**
 4. Run **npm start**.
 5. Open a new terminal and type **cd client**, then hit enter.
@@ -12,7 +12,7 @@ Congrats, you should be running the WYSIWYG Editor prototype! If it hasn't autom
 *If any of the **npm install** instructions give vulnerability errors that can be fixed with **npm audit fix**, please run **npm audit fix**. Do not force fixes if they are breaking (such as by using npm audit fix --force), as we cannot guarantee the code will work with forced fixes!*
 
 ## Additional Scripts
-In addition to **npm run build** and **npm start**, the following scripts are avaliable - but please **do not use them** unless you're sure of what you're doing!!!
+In addition to **npm run build** and **npm start**, the following scripts are avaliable - but please **do not use them** unless you're sure of what you're doing!
 
 ### `npm test`
 
