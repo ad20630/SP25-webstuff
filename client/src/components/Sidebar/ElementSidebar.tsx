@@ -6,6 +6,9 @@ import { NodeAttribute, StorableHtmlNode } from "types/HtmlNodes";
 import ImageGallery from "./ImageGallery";
 import { Tooltip } from "react-tooltip"; // Handles hover-over tooltips
 import ReactQuill from 'react-quill-new';
+/*import { Editor as TinyMCEEditor } from 'tinymce/tinymce';
+import BundledEditor from '../../BundledEditor.jsx'
+DO NOT REMOVE - for future TinyMCE implementation*/
 
 type Props = {};
 
@@ -40,6 +43,14 @@ const ElementSidebar = (props: Props) => {
     }
   }
 
+  /*  const editorRef = useRef<TinyMCEEditor | null>(null); //TinyMCE handling
+  const log = () => {
+    if (editorRef.current) {
+      console.log(editorRef.current.getContent());
+    }
+  }; 
+For TinyMCE imp - DO NOT REMOVE
+  */
   const buildInput = (
     source: { [key: string]: NodeAttribute },
     index: number,
@@ -69,6 +80,26 @@ const ElementSidebar = (props: Props) => {
       isImageElement = true;
     }
 
+/*For TinyMCE implementation - DO NOT REMOVE 
+    if (val.input?.type === "richtext" ) { //Handles richtext editing using TinyMCE
+      input = (
+        <BundledEditor 
+        tinymceScriptSrc='/tinymce/tinymce.min.js'
+        onInit={(_evt: any, editor: any) => editorRef.current = editor}
+        initialValue={val.value || "hi"} //Dynamic assignment based on Widget value
+        onEditorChange={(content: string) => {
+          dispatch({
+            type: ActionType.ATTRIBUTE_CHANGED,
+            target: target,
+            attribute: key,
+            newValue: content,
+          });
+        }
+      }
+      
+        />
+      );
+    }*/
     if (val.input && val.input.type === "richtext") {
       input = (
         <ReactQuill 
@@ -109,7 +140,7 @@ const ElementSidebar = (props: Props) => {
         />
         
       );
-    }
+    } //Remove lines 103-143 to remove Quill when TinyMCE is complete
 
     if (
       val.input &&
