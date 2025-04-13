@@ -126,6 +126,13 @@ export function handleDragAndDropAction(state: EditorState, action: EditorAction
                                             type: "text",
                                             displayName: "File"
                                         }
+                                    },
+                                    alt: {
+                                        value: action.payload.alt || "Image",
+                                        input: {
+                                            type: "text",
+                                            displayName: "Alt Text"
+                                        }
                                     }
                                 },
                                 style: {
