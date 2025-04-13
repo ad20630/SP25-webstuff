@@ -638,40 +638,68 @@ export const HtmlInterpreter = (props: Props) => {
         draggableOpts={{ grid: [5, 5] }}
         axis={isHeading ? 'both' : 'both'} // Allow both x and y movement for headings
       >
-        {React.createElement(
-          element,
-          {
-            ...finalArgs,
-            style: { 
-              ...outputStyleObject, 
-              width: '100%', 
-              height: isHeading ? 'auto' : '100%',
-              overflow: isLayout ? 'auto' : 'visible',
-              cursor: 'move',
-              position: 'relative'
+        {element === "img" ? (
+          React.createElement(
+            element,
+            {
+              ...finalArgs,
+              style: { 
+                ...outputStyleObject, 
+                width: '100%', 
+                height: '100%',
+                objectFit: 'contain'
+              }
             }
-          },
-          <>
-            {children}
-            {isColumnContainer && editorState.selectedElementId === id && columnOperations}
-          </>
+          )
+        ) : (
+          React.createElement(
+            element,
+            {
+              ...finalArgs,
+              style: { 
+                ...outputStyleObject, 
+                width: '100%', 
+                height: isHeading ? 'auto' : '100%',
+                overflow: isLayout ? 'auto' : 'visible',
+                cursor: 'move',
+                position: 'relative'
+              }
+            },
+            <>
+              {children}
+              {isColumnContainer && editorState.selectedElementId === id && columnOperations}
+            </>
+          )
         )}
       </ResizableBox>
     );
   } else {
-    Element = React.createElement(
-      element,
-      {
-        ...finalArgs,
-        style: { 
-          ...outputStyleObject, 
-          position: 'relative'
+    Element = element === "img" ? (
+      React.createElement(
+        element,
+        {
+          ...finalArgs,
+          style: { 
+            ...outputStyleObject, 
+            position: 'relative'
+          }
         }
-      },
-      <>
-        {children}
-        {isColumnContainer && editorState.selectedElementId === id && columnOperations}
-      </>
+      )
+    ) : (
+      React.createElement(
+        element,
+        {
+          ...finalArgs,
+          style: { 
+            ...outputStyleObject, 
+            position: 'relative'
+          }
+        },
+        <>
+          {children}
+          {isColumnContainer && editorState.selectedElementId === id && columnOperations}
+        </>
+      )
     );
   }
 
