@@ -4,11 +4,25 @@ import { useState, useEffect } from "react";
 import { useEditor } from "state/editor/EditorReducer";
 import { ActionType } from "state/editor/EditorReducer";
 
+type Page = {
+  id: number;
+  name: string;
+  subdomain: string;
+}
+
 const PageHeader = () => {
   const { saveToLocalStorage, loadFromLocalStorage } = useSaveLoadActions();
   const { state: editorState, dispatch: editorDispatch } = useEditor();
   const [saveMessage, setSaveMessage] = useState("Save");
   const [loadMessage, setLoadMessage] = useState("Load");
+  const [currentPage, setCurrentPage] = useState(() => {
+    const savedEditingPage = localStorage.getItem('currentEditingPage');
+    return savedEditingPage ? parseInt(savedEditingPage) : 1;
+  });
+  const [pages, setPages] = useState<Page[]>(() => {
+    const savedPages = localStorage.getItem('Pages');
+    return savedPages ? JSON.parse(savedPages) : [{ id: 1, name: 'Page 1', subdomain: 'page-1' }];
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -29,17 +43,17 @@ const PageHeader = () => {
   }, [editorDispatch]);
 
   const handleSaveClick = () => {
-    saveToLocalStorage("editorState");
+    saveToLocalStorage(currentPage.toString());
     setSaveMessage("Saved!");
     setTimeout(() => {
       setSaveMessage("Save");
-    }, 2000); // Reset save message after 2 seconds
+    }, 2000);
   };
 
   const handleLoadClick = () => {
-    loadFromLocalStorage("editorState");
+    loadFromLocalStorage(currentPage.toString());
     setLoadMessage("Loaded!");
-    setTimeout(() => setLoadMessage("Load"), 2000); // Reset load message after 2 seconds
+    setTimeout(() => setLoadMessage("Load"), 2000);
   };
 
   const handleUndoClick = () => {
@@ -50,6 +64,8 @@ const PageHeader = () => {
     editorDispatch({ type: ActionType.REDO });
   };
 
+  const currentPageData = pages.find((page: Page) => page.id === currentPage);
+
   return (
     <header className="header">
       <div className="header-left">
@@ -59,13 +75,15 @@ const PageHeader = () => {
               Page name:
             </label>
             <span id="pageName" className="page-name">
-              About Me
+              {currentPageData?.name || 'Untitled Page'}
             </span>
           </div>
           <div className="permalink-section">
             <span className="permalink-label">Permalink:</span>
             <span className="permalink">
-              johndoe.com/<a href="johndoe.com/about-me">about-me</a>
+              johndoe.com/<a href={`johndoe.com/${currentPageData?.subdomain || 'untitled'}`}>
+                {currentPageData?.subdomain || 'untitled'}
+              </a>
             </span>
           </div>
         </div>
@@ -73,11 +91,21 @@ const PageHeader = () => {
 
       <div className="header-middle">
         <span className="current-page-name">Current Page</span>
-        <select name="current-page" className="current-page-dropdown">
-          <option value="about">About Me</option>
-          <option value="contact">Contact</option>
-          <option value="bio">Biography</option>
-          <option value="testimonials">Testimonials</option>
+        <select 
+          name="current-page" 
+          className="current-page-dropdown"
+          value={currentPage}
+          onChange={(e) => {
+            const newPageId = parseInt(e.target.value);
+            setCurrentPage(newPageId);
+            loadFromLocalStorage(newPageId.toString());
+          }}
+        >
+          {pages.map((page: Page) => (
+            <option key={page.id} value={page.id}>
+              {page.name}
+            </option>
+          ))}
         </select>
       </div>
 
