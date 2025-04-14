@@ -1,23 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSaveLoadActions } from 'state/editor/Helpers';
+
+type Page = {
+  id: number;
+  name: string;
+  subdomain: string;
+}
 
 type Props = {}
 
-const PageMenu = ({ pageNum, onDelete, onClose, onSwitch }: { 
-  pageNum: number, 
+const PageMenu = ({ page, onDelete, onClose, onSwitch, onUpdate }: { 
+  page: Page, 
   onDelete: () => void, 
   onClose: () => void,
-  onSwitch: () => void 
+  onSwitch: () => void,
+  onUpdate: (name: string, subdomain: string) => void
 }) => {
-  const [pagename, setPagename] = useState('');
-  const [subdomain, setSubdomain] = useState('');
+  const [pagename, setPagename] = useState(page.name);
+  const [subdomain, setSubdomain] = useState(page.subdomain);
 
   const handlePagenameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPagename(e.target.value);
+    const newName = e.target.value;
+    setPagename(newName);
+    onUpdate(newName, subdomain);
   };
 
   const handleSubdomainChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSubdomain(e.target.value);
+    const newSubdomain = e.target.value;
+    setSubdomain(newSubdomain);
+    onUpdate(pagename, newSubdomain);
   };
 
   return (
@@ -44,9 +55,9 @@ const PageMenu = ({ pageNum, onDelete, onClose, onSwitch }: {
 };
 
 const MappingSidebar = (props: Props) => {
-  const [pages, setPages] = useState(() => {
+  const [pages, setPages] = useState<Page[]>(() => {
     const savedPages = localStorage.getItem('Pages');
-    return savedPages ? JSON.parse(savedPages) : [1];
+    return savedPages ? JSON.parse(savedPages) : [{ id: 1, name: 'Page 1', subdomain: 'page-1' }];
   });
   const [selectedPage, setSelectedPage] = useState<number | null>(null);
   const [editingPage, setEditingPage] = useState<number | null>(() => {
@@ -56,39 +67,42 @@ const MappingSidebar = (props: Props) => {
   const { loadFromLocalStorage, saveToLocalStorage } = useSaveLoadActions();
 
   // Save current editing page whenever it changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (editingPage !== null) {
       localStorage.setItem('currentEditingPage', editingPage.toString());
     }
   }, [editingPage]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('Pages', JSON.stringify(pages));
   }, [pages]);
 
   const handleAddPage = () => {
-    setPages([...pages, pages.length + 1]);
+    const newId = pages.length + 1;
+    setPages([...pages, { id: newId, name: `Page ${newId}`, subdomain: `page-${newId}` }]);
   };
 
-  const handlePageClick = (pageNum: number) => {
-    setSelectedPage(selectedPage === pageNum ? null : pageNum);
+  const handlePageClick = (pageId: number) => {
+    setSelectedPage(selectedPage === pageId ? null : pageId);
   };
 
-  const handleDeletePage = (pageNum: number) => {
-    setPages(pages.filter((p: number) => p !== pageNum));
+  const handleDeletePage = (pageId: number) => {
+    setPages(pages.filter(p => p.id !== pageId));
     setSelectedPage(null);
   };
 
-  const handleSwitchPage = (pageNum: number) => {
-    console.log('Current editing page:', editingPage);
+  const handleSwitchPage = (pageId: number) => {
     if (editingPage !== null) {
-      console.log('Attempting to save page:', editingPage);
       saveToLocalStorage(editingPage.toString());
-      console.log('Save completed');
     }
-    console.log('Switching to page:', pageNum);
-    setEditingPage(pageNum);
-    loadFromLocalStorage(pageNum.toString());
+    setEditingPage(pageId);
+    loadFromLocalStorage(pageId.toString());
+  };
+
+  const handleUpdatePage = (pageId: number, name: string, subdomain: string) => {
+    setPages(pages.map(page => 
+      page.id === pageId ? { ...page, name, subdomain } : page
+    ));
   };
 
   return (
@@ -101,20 +115,21 @@ const MappingSidebar = (props: Props) => {
         flexDirection: 'column',
         gap: '10px'
       }}>
-        {pages.map((pageNum: number) => (
-          <div key={pageNum} className="page-container">
+        {pages.map((page) => (
+          <div key={page.id} className="page-container">
             <button 
-              className={`page-button ${selectedPage === pageNum ? 'selected' : ''}`}
-              onClick={() => handlePageClick(pageNum)}
+              className={`page-button ${selectedPage === page.id ? 'selected' : ''}`}
+              onClick={() => handlePageClick(page.id)}
             >
-              Page {pageNum}
+              {page.name}
             </button>
-            {selectedPage === pageNum && (
+            {selectedPage === page.id && (
               <PageMenu 
-                pageNum={pageNum}
-                onSwitch={() => handleSwitchPage(pageNum)}
-                onDelete={() => handleDeletePage(pageNum)}
+                page={page}
+                onSwitch={() => handleSwitchPage(page.id)}
+                onDelete={() => handleDeletePage(page.id)}
                 onClose={() => setSelectedPage(null)}
+                onUpdate={(name, subdomain) => handleUpdatePage(page.id, name, subdomain)}
               />
             )}
           </div>
