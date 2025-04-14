@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSaveLoadActions } from 'state/editor/Helpers';
+import { usePages } from 'state/pages/PagesContext';
 
 type Page = {
   id: number;
@@ -55,54 +56,20 @@ const PageMenu = ({ page, onDelete, onClose, onSwitch, onUpdate }: {
 };
 
 const MappingSidebar = (props: Props) => {
-  const [pages, setPages] = useState<Page[]>(() => {
-    const savedPages = localStorage.getItem('Pages');
-    return savedPages ? JSON.parse(savedPages) : [{ id: 1, name: 'Page 1', subdomain: 'page-1' }];
-  });
   const [selectedPage, setSelectedPage] = useState<number | null>(null);
-  const [editingPage, setEditingPage] = useState<number | null>(() => {
-    const savedEditingPage = localStorage.getItem('currentEditingPage');
-    return savedEditingPage ? parseInt(savedEditingPage) : 1;
-  });
+  const { pages, currentPage, setCurrentPage, addPage, deletePage, updatePage } = usePages();
   const { loadFromLocalStorage, saveToLocalStorage } = useSaveLoadActions();
-
-  // Save current editing page whenever it changes
-  useEffect(() => {
-    if (editingPage !== null) {
-      localStorage.setItem('currentEditingPage', editingPage.toString());
-    }
-  }, [editingPage]);
-
-  useEffect(() => {
-    localStorage.setItem('Pages', JSON.stringify(pages));
-  }, [pages]);
-
-  const handleAddPage = () => {
-    const newId = pages.length + 1;
-    setPages([...pages, { id: newId, name: `Page ${newId}`, subdomain: `page-${newId}` }]);
-  };
 
   const handlePageClick = (pageId: number) => {
     setSelectedPage(selectedPage === pageId ? null : pageId);
   };
 
-  const handleDeletePage = (pageId: number) => {
-    setPages(pages.filter(p => p.id !== pageId));
-    setSelectedPage(null);
-  };
-
   const handleSwitchPage = (pageId: number) => {
-    if (editingPage !== null) {
-      saveToLocalStorage(editingPage.toString());
+    if (currentPage !== null) {
+      saveToLocalStorage(currentPage.toString());
     }
-    setEditingPage(pageId);
+    setCurrentPage(pageId);
     loadFromLocalStorage(pageId.toString());
-  };
-
-  const handleUpdatePage = (pageId: number, name: string, subdomain: string) => {
-    setPages(pages.map(page => 
-      page.id === pageId ? { ...page, name, subdomain } : page
-    ));
   };
 
   return (
@@ -127,16 +94,16 @@ const MappingSidebar = (props: Props) => {
               <PageMenu 
                 page={page}
                 onSwitch={() => handleSwitchPage(page.id)}
-                onDelete={() => handleDeletePage(page.id)}
+                onDelete={() => deletePage(page.id)}
                 onClose={() => setSelectedPage(null)}
-                onUpdate={(name, subdomain) => handleUpdatePage(page.id, name, subdomain)}
+                onUpdate={(name, subdomain) => updatePage(page.id, name, subdomain)}
               />
             )}
           </div>
         ))}
         <button 
           className="add-page-button"
-          onClick={handleAddPage}
+          onClick={addPage}
         >
           + Add Page
         </button>
