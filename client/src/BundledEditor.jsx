@@ -1,5 +1,7 @@
 import { Editor } from '@tinymce/tinymce-react';
 
+//This is the editor for TinyMCE - the richtext editor. Most settings will be here.
+
 // TinyMCE so the global var exists
 import 'tinymce/tinymce';
 // DOM model
