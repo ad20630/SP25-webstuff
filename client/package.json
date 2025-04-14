@@ -1,6 +1,6 @@
 {
-    "name": "wysiwyg",
-    "version": "0.1.0",
+    "name": "wysiwyg-prototype",
+    "version": "0.2.0",
     "private": true,
     "dependencies": {
         "@remix-run/router": "^1.23.0",

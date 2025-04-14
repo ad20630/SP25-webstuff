@@ -1,5 +1,7 @@
 # WYSIWYG Website Builder Prototype - SP2025
 This is a working prototype of the WYSIWYG editor, a drag-and-drop solution to building a website built using Typescript and React. 
+The current prototype version is 0.2.0, but is ultimately a prototype and will still have many errors and some missing functions.
+We recommend keeping the version number under 1.0.0 until the first releaseable version is released due to the instability of the program.
 
 ## Running the Program
 1. From a terminal located inside the main project directory, run `npm install`
