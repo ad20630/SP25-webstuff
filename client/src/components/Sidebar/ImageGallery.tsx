@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createClient, Photo } from "pexels";
 import "../../styles/sidebar.scss";
 import { useDraggable } from "state/dragAndDrop/hooks/useDraggable";
@@ -7,7 +7,7 @@ const apikey = process.env.REACT_APP_PEXELS_API_KEY; // Use the Pexels API key
 const client = createClient(apikey || "");  // Pass the API key to the client
 
 interface DraggableImageProps {
-  img: Photo;
+  img: Photo | { src: { medium: string }, alt: string };
   onSelect: (url: string) => void;
 }
 
@@ -34,13 +34,31 @@ const DraggableImage: React.FC<DraggableImageProps> = ({ img, onSelect }) => {
 };
 
 const ImageGallery = ({ onSelect }: { onSelect: (url: string) => void }) => {
-  const [images, setImages] = useState<Photo[]>([]);
+  const [pexelsImages, setPexelsImages] = useState<Photo[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<{ src: { medium: string }, alt: string }[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   console.log("Pexels API Key:", apikey);
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
+        const newImage = {
+          src: { medium: dataUrl },
+          alt: file.name
+        };
+        setUploadedImages(prev => [newImage, ...prev]);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const fetchImages = async (query: string, pageNum: number = 1) => {
     setLoading(true);
@@ -53,9 +71,9 @@ const ImageGallery = ({ onSelect }: { onSelect: (url: string) => void }) => {
       });
       if (res && "photos" in res && res.photos) {
         if (pageNum === 1) {
-          setImages(res.photos);
+          setPexelsImages(res.photos);
         } else {
-          setImages(prev => [...prev, ...res.photos]);
+          setPexelsImages(prev => [...prev, ...res.photos]);
         }
       } else {
         setError("No photos found");
@@ -86,37 +104,66 @@ const ImageGallery = ({ onSelect }: { onSelect: (url: string) => void }) => {
 
   return (
     <div className="image-gallery">
-      <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search for images..."
-          className="search-input"
-        />
-        <button type="submit" className="search-button">
-          Search
-        </button>
-      </form>
-
-      {error && <p className="error-message">{error}</p>}
-      {loading && <p>Loading...</p>}
-      
-      <div className="grid">
-        {images.map((img) => (
-          <DraggableImage key={img.id} img={img} onSelect={onSelect} />
-        ))}
+      {/* Uploaded Images Section */}
+      <div className="gallery-section">
+        <h3>Your Uploaded Images</h3>
+        <div className="upload-section">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
+          <button 
+            className="upload-button"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Upload Image
+          </button>
+        </div>
+        <div className="grid">
+          {uploadedImages.map((img, index) => (
+            <DraggableImage key={`uploaded-${index}`} img={img} onSelect={onSelect} />
+          ))}
+        </div>
       </div>
 
-      {images.length > 0 && (
-        <button 
-          onClick={handleLoadMore} 
-          className="load-more-button"
-          disabled={loading}
-        >
-          {loading ? 'Loading...' : 'Load More'}
-        </button>
-      )}
+      {/* Pexels Images Section */}
+      <div className="gallery-section">
+        <h3>Pexels Image Gallery</h3>
+        <form onSubmit={handleSearch} className="search-form">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search for images..."
+            className="search-input"
+          />
+          <button type="submit" className="search-button">
+            Search
+          </button>
+        </form>
+
+        {error && <p className="error-message">{error}</p>}
+        {loading && <p>Loading...</p>}
+        
+        <div className="grid">
+          {pexelsImages.map((img) => (
+            <DraggableImage key={img.id} img={img} onSelect={onSelect} />
+          ))}
+        </div>
+
+        {pexelsImages.length > 0 && (
+          <button 
+            onClick={handleLoadMore} 
+            className="load-more-button"
+            disabled={loading}
+          >
+            {loading ? 'Loading...' : 'Load More'}
+          </button>
+        )}
+      </div>
     </div>
   );
 };
