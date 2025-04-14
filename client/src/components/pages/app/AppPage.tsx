@@ -6,6 +6,7 @@ import { EditorProvider } from "state/editor/EditorContext";
 import { DragAndDropProvider } from "state/dragAndDrop/DragAndDropContext";
 import { MouseProvider } from "state/mouse/MouseContext";
 import { TextEditingProvider } from "state/textEditing/TextEditingContext";
+import { PagesProvider } from "state/pages/PagesContext";
 
 type Props = {};
 
@@ -15,11 +16,13 @@ const AppPage = (props: Props) => {
       <DragAndDropProvider>
         <TextEditingProvider>
           <EditorProvider>
-            <Header />
-            <div className="page-content">
-              <Editor />
-              <Sidebar />
-            </div>
+            <PagesProvider>
+              <Header />
+              <div className="page-content">
+                <Editor />
+                <Sidebar />
+              </div>
+            </PagesProvider>
           </EditorProvider>
         </TextEditingProvider>
       </DragAndDropProvider>
