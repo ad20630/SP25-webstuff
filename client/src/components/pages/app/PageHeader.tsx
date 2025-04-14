@@ -3,26 +3,14 @@ import { useSaveLoadActions } from "../../../state/editor/Helpers";
 import { useState, useEffect } from "react";
 import { useEditor } from "state/editor/EditorReducer";
 import { ActionType } from "state/editor/EditorReducer";
-
-type Page = {
-  id: number;
-  name: string;
-  subdomain: string;
-}
+import { usePages } from "state/pages/PagesContext";
 
 const PageHeader = () => {
   const { saveToLocalStorage, loadFromLocalStorage } = useSaveLoadActions();
   const { state: editorState, dispatch: editorDispatch } = useEditor();
+  const { pages, currentPage, setCurrentPage } = usePages();
   const [saveMessage, setSaveMessage] = useState("Save");
   const [loadMessage, setLoadMessage] = useState("Load");
-  const [currentPage, setCurrentPage] = useState(() => {
-    const savedEditingPage = localStorage.getItem('currentEditingPage');
-    return savedEditingPage ? parseInt(savedEditingPage) : 1;
-  });
-  const [pages, setPages] = useState<Page[]>(() => {
-    const savedPages = localStorage.getItem('Pages');
-    return savedPages ? JSON.parse(savedPages) : [{ id: 1, name: 'Page 1', subdomain: 'page-1' }];
-  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -64,7 +52,7 @@ const PageHeader = () => {
     editorDispatch({ type: ActionType.REDO });
   };
 
-  const currentPageData = pages.find((page: Page) => page.id === currentPage);
+  const currentPageData = pages.find((page) => page.id === currentPage);
 
   return (
     <header className="header">
@@ -101,7 +89,7 @@ const PageHeader = () => {
             loadFromLocalStorage(newPageId.toString());
           }}
         >
-          {pages.map((page: Page) => (
+          {pages.map((page) => (
             <option key={page.id} value={page.id}>
               {page.name}
             </option>
