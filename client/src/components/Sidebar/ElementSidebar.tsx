@@ -1,19 +1,18 @@
 import { findPrimaryAttributes } from "components/pages/app/Helpers";
-import React, { ChangeEvent, useState, useRef } from "react"; //Added useRef for ReactQuill handling
+import React, { ChangeEvent, useRef } from "react"; //Added useRef for ReactQuill handling
 import { ActionType, useEditor } from "state/editor/EditorReducer";
 import { parseId } from "state/editor/Helpers";
-import { NodeAttribute, StorableHtmlNode } from "types/HtmlNodes";
+import { NodeAttribute} from "types/HtmlNodes";
 import ImageGallery from "./ImageGallery";
 import { Tooltip } from "react-tooltip"; // Handles hover-over tooltips
-import ReactQuill from 'react-quill-new';
-/*import { Editor as TinyMCEEditor } from 'tinymce/tinymce';
+import ReactQuill from 'react-quill-new'; //TO BE REMOVED
+import { Editor as TinyMCEEditor } from 'tinymce/tinymce';
 import BundledEditor from '../../BundledEditor.jsx'
-DO NOT REMOVE - for future TinyMCE implementation*/
 
 type Props = {};
 
 const ElementSidebar = (props: Props) => {
-  const [color, setColor] = React.useState({});
+  //const [color, setColor] = React.useState({});
   const { state: editorState, dispatch } = useEditor();
   let isImageElement = false;
 
@@ -43,14 +42,14 @@ const ElementSidebar = (props: Props) => {
     }
   }
 
-  /*  const editorRef = useRef<TinyMCEEditor | null>(null); //TinyMCE handling
+ /* const editorRef = useRef<TinyMCEEditor | null>(null); //TinyMCE handling
   const log = () => {
     if (editorRef.current) {
       console.log(editorRef.current.getContent());
     }
   }; 
-For TinyMCE imp - DO NOT REMOVE
-  */
+//TinyMCE from lines 45-50*/
+
   const buildInput = (
     source: { [key: string]: NodeAttribute },
     index: number,
@@ -80,8 +79,7 @@ For TinyMCE imp - DO NOT REMOVE
       isImageElement = true;
     }
 
-/*For TinyMCE implementation - DO NOT REMOVE 
-    if (val.input?.type === "richtext" ) { //Handles richtext editing using TinyMCE
+    /*if (val.input?.type === "richtext" ) { //Handles richtext editing using TinyMCE
       input = (
         <BundledEditor 
         tinymceScriptSrc='/tinymce/tinymce.min.js'
@@ -140,7 +138,7 @@ For TinyMCE imp - DO NOT REMOVE
         />
         
       );
-    } //Remove lines 103-143 to remove Quill when TinyMCE is complete
+    } //Remove lines 103-143 to remove Quill when TinyMCE is complete*/
 
     if (
       val.input &&

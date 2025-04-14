@@ -51,7 +51,7 @@ import 'tinymce/plugins/emoticons/js/emojis';
 // Content styles, including inline UI like fake cursors
 import 'tinymce/skins/content/default/content';
 import 'tinymce/skins/ui/oxide/content';
-import React, { useRef } from 'react';
+import React from 'react';
 
 
 export default function BundledEditor(props) {
