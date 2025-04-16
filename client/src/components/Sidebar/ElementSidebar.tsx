@@ -42,7 +42,7 @@ const ElementSidebar = (props: Props) => {
     }
   }
 
- /* const editorRef = useRef<TinyMCEEditor | null>(null); //TinyMCE handling
+ const editorRef = useRef<TinyMCEEditor | null>(null); //TinyMCE handling
   const log = () => {
     if (editorRef.current) {
       console.log(editorRef.current.getContent());
@@ -79,7 +79,7 @@ const ElementSidebar = (props: Props) => {
       isImageElement = true;
     }
 
-    /*if (val.input?.type === "richtext" ) { //Handles richtext editing using TinyMCE
+    if (val.input?.type === "richtext" ) { //Handles richtext editing using TinyMCE
       input = (
         <BundledEditor 
         tinymceScriptSrc='/tinymce/tinymce.min.js'
@@ -97,8 +97,8 @@ const ElementSidebar = (props: Props) => {
       
         />
       );
-    }*/
-    if (val.input && val.input.type === "richtext") {
+    }
+    /*if (val.input && val.input.type === "richtext") {
       input = (
         <ReactQuill 
         className="quill-editor" //To force CSS styling due to visual glitches
