@@ -56,7 +56,6 @@
             "metadata": {
               "draggable": true,
               "selectable": true,
-              "resizable": true,
               "type": "WIDGET"
             }
           },
@@ -135,19 +134,17 @@
                   ]
                 }
               },
-              "width": {
-                "value": "100%",
-                "input": {
-                  "type": "text",
-                  "displayName": "Width"
-                }
+              "display": {
+                "value": "flex",
+                "suppress": true
               },
-              "height": {
-                "value": "100%",
-                "input": {
-                  "type": "text",
-                  "displayName": "Height"
-                }
+              "align-items": {
+                "value": "center",
+                "suppress": true
+              },
+              "justify-content": {
+                "value": "center",
+                "suppress": true
               },
               "padding": {
                 "value": "8px 16px",
@@ -155,6 +152,10 @@
               },
               "text-decoration": {
                 "value": "none",
+                "suppress": true
+              },
+              "color": {
+                "value": "inherit",
                 "suppress": true
               }
             },
