@@ -20,7 +20,16 @@
             }
           }
         },
-        "style": {},
+        "style": {
+          "display": {
+            "value": "flex",
+            "readonly": true
+          },
+          "flex-direction": {
+            "value": "row",
+            "readonly": true
+          }
+        },
         "children": [1,2],
         "metadata": {
           "draggable": true,
@@ -43,55 +52,62 @@
           }
         },
         "style": {            
+          "flex-grow": {
+            "value": "1",
+            "input": {
+              "type": "text",
+              "displayName": "Relative Size"
+            }
+          },
           "background-color":{
-          "value": "",
-          "input": {
-            "type": "color",
-            "displayName": "Background Color"
-          }
-      },
-      "border-color":{
-          "value":"",
-          "input": {
+            "value": "",
+            "input": {
               "type": "color",
-              "displayName": "Border Color"
+              "displayName": "Background Color"
+            }
+          },
+          "border-color":{
+              "value":"",
+              "input": {
+                  "type": "color",
+                  "displayName": "Border Color"
+              }
+          },
+          "border-style": {
+            "value":"",
+            "input":{
+            "type": "select",
+            "displayName": "Border Style",
+            "options":[
+               {"value": "none", "text": "None"},
+               {"value": "solid", "text": "Solid"},
+               {"value": "double", "text": "Double"},
+               {"value": "dotted", "text": "Dotted"},
+               {"value": "dashed", "text": "Dashed"},
+               {"value": "groove", "text": "Grooved"},
+               {"value": "ridge", "text": "Ridged"},
+               {"value": "inset", "text": "Inset"},
+               {"value": "outset", "text": "Outset"},
+               {"value": "hidden", "text": "Hidden"}
+              ]
+            }
+          },    
+          "border-width": {
+            "value":"",
+            "input":{
+            "type": "select",
+            "displayName": "Border Thickness",
+            "options":[
+               {"value": "0px", "text": "Invisible"},
+               {"value": "1px", "text": "Extra Thin"},
+               {"value": "2.5px", "text": "Thin"},
+               {"value": "3.5px", "text": "Standard"},
+               {"value": "4.5px", "text": "Thick"},
+               {"value": "6px", "text": "Extra Thick"}
+              ]
+            }
           }
-      },
-      "border-style": {
-        "value":"",
-        "input":{
-        "type": "select",
-        "displayName": "Border Style",
-        "options":[
-           {"value": "none", "text": "None"},
-           {"value": "solid", "text": "Solid"},
-           {"value": "double", "text": "Double"},
-           {"value": "dotted", "text": "Dotted"},
-           {"value": "dashed", "text": "Dashed"},
-           {"value": "groove", "text": "Grooved"},
-           {"value": "ridge", "text": "Ridged"},
-           {"value": "inset", "text": "Inset"},
-           {"value": "outset", "text": "Outset"},
-           {"value": "hidden", "text": "Hidden"}
-          ]
-        }
-      },    
-      "border-width": {
-        "value":"",
-        "input":{
-        "type": "select",
-        "displayName": "Border Thickness",
-        "options":[
-           {"value": "0px", "text": "Invisible"},
-           {"value": "1px", "text": "Extra Thin"},
-           {"value": "2.5px", "text": "Thin"},
-           {"value": "3.5px", "text": "Standard"},
-           {"value": "4.5px", "text": "Thick"},
-           {"value": "6px", "text": "Extra Thick"}
-          ]
-        }
-      }
-    },
+        },
         "children": [],
         "metadata": {
           "draggable": true,
@@ -114,55 +130,62 @@
           }
         },
         "style": {            
+          "flex-grow": {
+            "value": "1",
+            "input": {
+              "type": "text",
+              "displayName": "Relative Size"
+            }
+          },
           "background-color":{
-          "value": "",
-          "input": {
-            "type": "color",
-            "displayName": "Background Color"
-          }
-      },
-      "border-color":{
-          "value":"",
-          "input": {
+            "value": "",
+            "input": {
               "type": "color",
-              "displayName": "Border Color"
+              "displayName": "Background Color"
+            }
+          },
+          "border-color":{
+              "value":"",
+              "input": {
+                  "type": "color",
+                  "displayName": "Border Color"
+              }
+          },
+          "border-style": {
+            "value":"",
+            "input":{
+            "type": "select",
+            "displayName": "Border Style",
+            "options":[
+               {"value": "none", "text": "None"},
+               {"value": "solid", "text": "Solid"},
+               {"value": "double", "text": "Double"},
+               {"value": "dotted", "text": "Dotted"},
+               {"value": "dashed", "text": "Dashed"},
+               {"value": "groove", "text": "Grooved"},
+               {"value": "ridge", "text": "Ridged"},
+               {"value": "inset", "text": "Inset"},
+               {"value": "outset", "text": "Outset"},
+               {"value": "hidden", "text": "Hidden"}
+              ]
+            }
+          },    
+          "border-width": {
+            "value":"",
+            "input":{
+            "type": "select",
+            "displayName": "Border Thickness",
+            "options":[
+               {"value": "0px", "text": "Invisible"},
+               {"value": "1px", "text": "Extra Thin"},
+               {"value": "2.5px", "text": "Thin"},
+               {"value": "3.5px", "text": "Standard"},
+               {"value": "4.5px", "text": "Thick"},
+               {"value": "6px", "text": "Extra Thick"}
+              ]
+            }
           }
-      },
-      "border-style": {
-        "value":"",
-        "input":{
-        "type": "select",
-        "displayName": "Border Style",
-        "options":[
-           {"value": "none", "text": "None"},
-           {"value": "solid", "text": "Solid"},
-           {"value": "double", "text": "Double"},
-           {"value": "dotted", "text": "Dotted"},
-           {"value": "dashed", "text": "Dashed"},
-           {"value": "groove", "text": "Grooved"},
-           {"value": "ridge", "text": "Ridged"},
-           {"value": "inset", "text": "Inset"},
-           {"value": "outset", "text": "Outset"},
-           {"value": "hidden", "text": "Hidden"}
-          ]
-        }
-      },    
-      "border-width": {
-        "value":"",
-        "input":{
-        "type": "select",
-        "displayName": "Border Thickness",
-        "options":[
-           {"value": "0px", "text": "Invisible"},
-           {"value": "1px", "text": "Extra Thin"},
-           {"value": "2.5px", "text": "Thin"},
-           {"value": "3.5px", "text": "Standard"},
-           {"value": "4.5px", "text": "Thick"},
-           {"value": "6px", "text": "Extra Thick"}
-          ]
-        }
-      }
-    },
+        },
         "children": [],
         "metadata": {
           "draggable": true,
