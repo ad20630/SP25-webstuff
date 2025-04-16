@@ -54,48 +54,24 @@ import 'tinymce/skins/ui/oxide/content';
 import React from 'react';
 
 
-export default function BundledEditor(props) {
-  const { initialValue, onEditorChange } = props;
-
+export default function BundledEditor({ initialValue, onEditorChange }) {
   return (
     <Editor
-        licenseKey='gpl'//Using GPL license - NOT commercial
-        init={{
-            height: 500,
-            menubar: false,
-            promotion: false,
-            initialValue: initialValue,
-            toolbar1: 'undo redo link | blocks | removeformat ',
-            toolbar2: 'bold italic forecolor alignment| bullist numlist outdent indent',
-            toolbar3: '',
-            toolbar_groups: {
-                alignment: {
-                  icon: 'align-center',
-                  tooltip: 'Alignment',
-                  items: 'alignleft aligncenter alignright alignjustify'
-                }
-            },
-            plugins: [
-            'advlist', 'autolink', 'lists', 'link',
-            'searchreplace', 'visualblocks', 'wordcount'
-            ],
-
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-          }
-        }
-        onEditorChange={onEditorChange} //syncs editor change rules 
-        onInit={(evt, editor) => {
-            if (initialValue) {
-              editor.setContent(initialValue);  // Explicitly set the content if it is passed
-            }
-            else if (!initialValue){
-                editor.setContent("weird");
-            }
-            else{
-                editor.setContent("oops, no content!");
-            }
-        }
-    }
+      licenseKey='gpl'
+      initialValue={initialValue} // use value instead of initialValue in init
+      onEditorChange={onEditorChange}
+      init={{
+        height: 500,
+        menubar: false,
+        promotion: false,
+        toolbar1: 'undo redo link | blocks | removeformat',
+        toolbar2: 'bold italic forecolor alignment| bullist numlist outdent indent',
+        plugins: [
+          'advlist', 'autolink', 'lists', 'link',
+          'searchreplace', 'visualblocks', 'wordcount'
+        ],
+        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+      }}
     />
   );
 }

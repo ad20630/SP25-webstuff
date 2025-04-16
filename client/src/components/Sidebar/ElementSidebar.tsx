@@ -12,7 +12,7 @@ type Props = {};
 
 const ElementSidebar = (props: Props) => {
   //const [color, setColor] = React.useState({});
-  const { state: editorState, dispatch } = useEditor();
+  const { state: editor, dispatch } = useEditor();
   let isImageElement = false;
 
   let attributes: { [key: string]: NodeAttribute } = {
@@ -21,7 +21,6 @@ const ElementSidebar = (props: Props) => {
   };
   let style: { [key: string]: NodeAttribute } = {};
 
-  const { state: editor, dispatch: editorDispatch } = useEditor();
 
   if (editor.selectedElementId) {
     const { section, index } = parseId(editor.selectedElementId);
@@ -32,7 +31,7 @@ const ElementSidebar = (props: Props) => {
     if (target) {
       ({ attributes, style } = findPrimaryAttributes(
         index,
-        editorState,
+        editor,
         section
       ) ?? {
         attributes: { ...target.attributes },
@@ -47,7 +46,6 @@ const ElementSidebar = (props: Props) => {
       console.log(editorRef.current.getContent());
     }
   }; 
-//TinyMCE from lines 45-50*/
 
   const buildInput = (
     source: { [key: string]: NodeAttribute },
@@ -81,8 +79,6 @@ const ElementSidebar = (props: Props) => {
     if (val.input?.type === "richtext" ) { //Handles richtext editing using TinyMCE
       input = (
         <BundledEditor 
-        tinymceScriptSrc='/tinymce/tinymce.min.js'
-        onInit={(_evt: any, editor: any) => editorRef.current = editor}
         initialValue={val.value || "hi"} //Dynamic assignment based on Widget value
         onEditorChange={(content: string) => {
           dispatch({
@@ -175,7 +171,7 @@ const ElementSidebar = (props: Props) => {
         <ImageGallery
           onSelect={(imageUrl) => {
             // Update the src attribute of the selected image element
-            editorDispatch({
+            dispatch({
               type: ActionType.ATTRIBUTE_CHANGED,
               target: "attributes",
               attribute: "src",

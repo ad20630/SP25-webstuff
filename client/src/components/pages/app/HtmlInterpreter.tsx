@@ -492,7 +492,7 @@ export const HtmlInterpreter = (props: Props) => {
 
   let children = [];
 
-  //ChatGPT generated until line 478 - allows HTML display for Quill editing, while also sanitizing all input for safety
+  //ChatGPT generated until line 478 - allows HTML display for richtext editing, while also sanitizing all input for safety
   if (content.attributes["text"]) {
     const cleanHTML = DOMPurify.sanitize(content.attributes["text"].value);
     children.push(
