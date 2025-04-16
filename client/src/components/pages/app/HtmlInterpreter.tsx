@@ -14,9 +14,9 @@ import { RenderableHtmlNode, StorableHtmlNode } from "types/HtmlNodes";
 import "styles/modal.css";
 import "styles/textbox.css";
 import { ActionType, useEditor } from "state/editor/EditorReducer";
-import { BsTrash3Fill } from "react-icons/bs";
-import { FaCopy } from "react-icons/fa";
-import { FaCode } from "react-icons/fa";
+import TrashIcon from "../../../assets/images/trash-icon.svg";
+import CopyIcon from "../../../assets/images/copy-icon.svg";
+import CodeIcon from "../../../assets/images/code-icon.svg";
 import { BsPlusSquareFill } from "react-icons/bs";
 import { useDragAndDropContext } from "state/dragAndDrop/DragAndDropReducer";
 import { useDraggable } from "state/dragAndDrop/hooks/useDraggable";
@@ -250,7 +250,9 @@ export const HtmlInterpreter = (props: Props) => {
 
   const elementOperations = (
     <div className="selected-element-ops">
-      <BsTrash3Fill
+      <img
+        src={TrashIcon}
+        alt="Delete Icon"
         title="Delete"
         className="icon delete-icon"
         onClick={() => {
@@ -259,45 +261,49 @@ export const HtmlInterpreter = (props: Props) => {
         }}
       />
 
-      <FaCopy
+      <img
+        src={CopyIcon}
+        alt="Copy Icon"
         title="Copy"
         className="icon copy-icon"
-        color = "#1c274c"
         onClick={() => handleCopyClick(id)}
       />
 
-      <FaCode
+      <img
+        src={CodeIcon}
+        alt="View Code"
         title="View"
         className="icon view-code-icon"
-        color = "#1c274c"
         onClick={() => handleViewClick(id)}
       />
-
     </div>
   );  
   const elementSectionOperations = ( //Same as elementOperations but with an added "Add" button
     <div className="selected-element-ops">
-      <BsTrash3Fill
+      <img
+        src={TrashIcon}
+        alt="Delete Icon"
         title="Delete"
         className="icon delete-icon"
-        color = "#1c274c"
         onClick={() => {
           console.log("clicked!");
           handleDeleteClick(id);
         }}
       />
 
-      <FaCopy
+      <img
+        src={CopyIcon}
+        alt="Copy Icon"
         title="Copy"
         className="icon copy-icon"
-        color = "#1c274c"
         onClick={() => handleCopyClick(id)}
       />
 
-      <FaCode
+      <img
+        src={CodeIcon}
+        alt="View Code"
         title="View"
         className="icon view-code-icon"
-        color = "#1c274c"
         onClick={() => handleViewClick(id)}
       />
 
@@ -492,7 +498,7 @@ export const HtmlInterpreter = (props: Props) => {
 
   let children = [];
 
-  //ChatGPT generated until line 478 - allows HTML display for richtext editing, while also sanitizing all input for safety
+  //ChatGPT generated until line 478 - allows HTML display for Quill editing, while also sanitizing all input for safety
   if (content.attributes["text"]) {
     const cleanHTML = DOMPurify.sanitize(content.attributes["text"].value);
     children.push(
@@ -553,12 +559,14 @@ export const HtmlInterpreter = (props: Props) => {
   const currentHeight = parseInt(content.style.height?.value || "200");
 
   // Determine if the element is resizable
-  const isResizable = content.metadata?.resizable !== false && editorState.selectedElementId === id && content.metadata?.type === "WIDGET";
+  const isResizable = content.metadata?.resizable !== false && 
+                     editorState.selectedElementId === id && 
+                     content.metadata?.type === "WIDGET" &&
+                     content.attributes.className?.value !== "navigation"; // Prevent resizing for navigation
 
   // Check if this is a special container type that needs custom resizing behavior
   const isLayout = content.attributes.className?.value === "horizontal" || 
-                   content.attributes.className?.value === "vertical" || 
-                   content.attributes.className?.value === "navigation";
+                   content.attributes.className?.value === "vertical";
                    
   // Check if this is a heading element
   const isHeading = content.element === "h1" || content.element === "h2" || content.element === "h3" || 
@@ -595,10 +603,6 @@ export const HtmlInterpreter = (props: Props) => {
     // Allow layout containers to be much larger
     if (isLayout) {
       return [2000, 2000] as [number, number]; // Allow larger containers
-    }
-    // Allow navigation to go full width
-    else if (content.attributes.className?.value === "navigation") {
-      return [2000, 500] as [number, number]; // Navigation bars can be taller now
     }
     return [1000, 1000] as [number, number]; // Default
   };
@@ -668,6 +672,18 @@ export const HtmlInterpreter = (props: Props) => {
       </ResizableBox>
     );
   } else {
+    // Special handling for navigation container
+    const isNavigation = content.attributes.className?.value === "navigation";
+    const navigationStyle = isNavigation ? {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      height: 'auto',
+      minHeight: '40px', // Add a minimum height to ensure visibility
+      padding: '10px 0'
+    } : {};
+
     Element = element === "img" ? (
       React.createElement(
         element,
@@ -686,7 +702,8 @@ export const HtmlInterpreter = (props: Props) => {
           ...finalArgs,
           style: { 
             ...outputStyleObject, 
-            position: 'relative'
+            position: 'relative',
+            ...navigationStyle
           }
         },
         <>
