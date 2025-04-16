@@ -61,7 +61,7 @@ export function handleAddAction(state: EditorState, action: EditorAction): Edito
     }
     const processedStyle: Record<string, NodeAttribute> = {};
     if (templateNode.style) {
-                for (const [key, value] of Object.entries(templateNode.style)) {
+        for (const [key, value] of Object.entries(templateNode.style)) {
             if (typeof value === "object" && value !== null && "value" in value) {
                 processedStyle[key] = {
                     value: value.value ?? "",
@@ -72,6 +72,18 @@ export function handleAddAction(state: EditorState, action: EditorAction): Edito
             }
         }
     }
+
+    // Add flex-grow property for new sections
+    if (className === "horizontal") {
+        processedStyle["flex-grow"] = {
+            value: "1",
+            input: {
+                type: "text",
+                displayName: "Relative Size"
+            }
+        };
+    }
+
     const childDirection = "childDirection" in templateNode.metadata
         ? templateNode.metadata.childDirection as "horizontal" | "vertical"
         : "horizontal"; // Default to horizontal

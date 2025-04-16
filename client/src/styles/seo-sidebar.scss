@@ -9,7 +9,7 @@
   h3 {
     margin: 0 0 1rem 0;
     font-size: 1.1rem;
-    color: #333;
+    color: #ffffff;
   }
 }
 
@@ -17,10 +17,32 @@
   margin-bottom: 1rem;
 
   label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #ffffff;
+    cursor: help;
+    position: relative;
+
+    .tooltip-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      font-size: 12px;
+      color: #333333;
+      cursor: help;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #f0f0f0;
+      }
+    }
   }
 
   input, textarea {
@@ -30,6 +52,8 @@
     border-radius: 4px;
     font-size: 0.9rem;
     transition: border-color 0.2s;
+    background-color: #ffffff;
+    color: #333333;
 
     &:focus {
       outline: none;
@@ -40,5 +64,14 @@
   textarea {
     resize: vertical;
     min-height: 80px;
+  }
+}
+
+.style-sidebar {
+  .seo-intro {
+    font-size: 0.9em;
+    color: #ffffff;
+    margin: 10px 0;
+    padding: 0 10px;
   }
 } 
