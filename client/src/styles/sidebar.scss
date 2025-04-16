@@ -101,23 +101,35 @@ div.element-style{
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  transition: 0.3s ease-in;
+  transition: all 0.3s ease-in;
   padding: 0 15px;
   border-left: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
   &:hover{
     background-color: aqua;
     cursor: pointer;
     transform: scale(1.02);
     border-left: 3px solid white;
+    width: 280%;
+    .sidebar-text {
+      color: #333;
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 }
 
 .sidebar-text {
-  width: 60%;
+  width: auto;
   z-index: 2;
-  margin: 0px 60px 0px 0px;
-  color:#333;
-  font-family:Georgia, 'Times New Roman', Times, serif;
+  margin: 0 10px;
+  color: #333;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.3s ease-in;
+  white-space: nowrap;
 }
 
 .TemplateIcon{
@@ -300,6 +312,13 @@ div.element-style{
       opacity: 0.6;
     }
   }
+
+  .empty-message {
+    color: #888;
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+  }
 }
 
 .image-container {
@@ -374,8 +393,40 @@ div.element-style{
     color:#333;
   }
 }
+ 
+//Quill editor override styles for visibility in-app and proper sizing
+.quill-editor{
+  background-color: white;
+  color:#333;
+  border-color: #333;
+  border-width: 2px;
+  
+  height: auto;
+  margin-top: 5px;
+  margin-left: 10px;
+  min-height: 200px;
+  max-height: 500px;
+  overflow-y: auto;
+}
 
-//TinyMCE Formatting
-.tox-tinymce{
-  margin-left: 7px;
+//Quill class override styles for proper HTML styling
+//Indent Fixes
+.ql-indent-1{
+  text-indent: 1em;
+}
+.ql-indent-2{
+  text-indent: 2em;
+}
+//Text Align Fixes
+.ql-align-center {
+  text-align: center;
+}
+.ql-align-left {
+  text-align: left;
+}
+.ql-align-right {
+  text-align: right;
+}
+.ql-align-justify {
+  text-align: justify;
 }
