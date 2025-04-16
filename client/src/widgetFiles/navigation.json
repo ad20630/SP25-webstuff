@@ -29,7 +29,7 @@
               }
             },
             "height": {
-              "value": "60px",
+              "value": "auto",
               "input": {
                 "type": "text",
                 "displayName": "Height"
@@ -46,6 +46,14 @@
             "align-items": {
               "value": "center",
               "suppress": true
+            },
+            "position": {
+              "value": "relative",
+              "suppress": true
+            },
+            "padding": {
+              "value": "10px 0",
+              "suppress": true
             }
           },
           "children": [1,2,3],
@@ -55,7 +63,6 @@
             "childDirection": "horizontal",
             "childPosition": "center",
             "selectable": true,
-            "resizable": true,
             "type": "WIDGET"
           }
         },
@@ -92,15 +99,23 @@
               "suppress": true
             },
             "display": {
-              "value": "inline",
+              "value": "flex",
               "suppress": true
             },
-            "width": {
-              "value": "auto",
+            "align-items": {
+              "value": "center",
               "suppress": true
             },
-            "height": {
-              "value": "auto",
+            "justify-content": {
+              "value": "center",
+              "suppress": true
+            },
+            "text-decoration": {
+              "value": "none",
+              "suppress": true
+            },
+            "color": {
+              "value": "inherit",
               "suppress": true
             }
           },
@@ -141,15 +156,23 @@
               "suppress": true
             },
             "display": {
-              "value": "inline",
+              "value": "flex",
               "suppress": true
             },
-            "width": {
-              "value": "auto",
+            "align-items": {
+              "value": "center",
               "suppress": true
             },
-            "height": {
-              "value": "auto",
+            "justify-content": {
+              "value": "center",
+              "suppress": true
+            },
+            "text-decoration": {
+              "value": "none",
+              "suppress": true
+            },
+            "color": {
+              "value": "inherit",
               "suppress": true
             }
           },
@@ -191,22 +214,31 @@
               "suppress": true
             },
             "display": {
-              "value": "inline",
+              "value": "flex",
               "suppress": true
             },
-            "width": {
-              "value": "auto",
+            "align-items": {
+              "value": "center",
               "suppress": true
             },
-            "height": {
-              "value": "auto",
+            "justify-content": {
+              "value": "center",
+              "suppress": true
+            },
+            "text-decoration": {
+              "value": "none",
+              "suppress": true
+            },
+            "color": {
+              "value": "inherit",
               "suppress": true
             }
           },
           "metadata": {
             "draggable": true,
             "selectable": true
-          }}
+          }
+        }
       ]
     }
   }
