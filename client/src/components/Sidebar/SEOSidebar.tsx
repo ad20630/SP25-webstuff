@@ -15,7 +15,9 @@ const SEOSidebar = (props: Props) => {
     ogTitle: '',
     ogDescription: '',
     ogImage: '',
-    canonicalUrl: ''
+    canonicalUrl: '',
+    index: 'index',
+    follow: 'follow'
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -40,7 +42,9 @@ const SEOSidebar = (props: Props) => {
     canonicalUrl: "The preferred URL for this page if it can be accessed through multiple URLs. Helps prevent duplicate content issues.",
     ogTitle: "The title that appears when your page is shared on social media platforms like Facebook or Twitter.",
     ogDescription: "The description that appears when your page is shared on social media platforms.",
-    ogImage: "The image that appears when your page is shared on social media platforms. Use a high-quality image (1200x630px recommended)."
+    ogImage: "The image that appears when your page is shared on social media platforms. Use a high-quality image (1200x630px recommended).",
+    index: "Controls whether search engines should index this page. 'index' allows indexing, 'noindex' prevents it.",
+    follow: "Controls whether search engines should follow links on this page. 'follow' allows following links, 'nofollow' prevents it."
   };
 
   return (
@@ -90,6 +94,28 @@ const SEOSidebar = (props: Props) => {
             onChange={(e) => handleInputChange('canonicalUrl', e.target.value)}
             placeholder="Enter canonical URL"
           />
+        </div>
+
+        <div className="seo-field">
+          <label title={tooltips.index}>Index <span className="tooltip-icon">?</span></label>
+          <select
+            value={seoData.index}
+            onChange={(e) => handleInputChange('index', e.target.value)}
+          >
+            <option value="index">Index</option>
+            <option value="noindex">No Index</option>
+          </select>
+        </div>
+
+        <div className="seo-field">
+          <label title={tooltips.follow}>Follow <span className="tooltip-icon">?</span></label>
+          <select
+            value={seoData.follow}
+            onChange={(e) => handleInputChange('follow', e.target.value)}
+          >
+            <option value="follow">Follow</option>
+            <option value="nofollow">No Follow</option>
+          </select>
         </div>
       </div>
 
