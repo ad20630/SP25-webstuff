@@ -6,6 +6,16 @@ interface ImageDropPayload {
     type: "image";
     url: string;
     alt: string;
+    className?: string;
+    style?: {
+        width: string;
+        height: string;
+        objectFit: string;
+    };
+    initialDimensions?: {
+        width: string;
+        height: string;
+    };
 }
 
 function isImageDropPayload(payload: any): payload is ImageDropPayload {
@@ -86,14 +96,14 @@ export function handleDragAndDropAction(state: EditorState, action: EditorAction
                                 },
                                 style: {
                                     width: {
-                                        value: "300px",
+                                        value: action.payload.initialDimensions?.width || "300px",
                                         input: {
                                             type: "text",
                                             displayName: "Width"
                                         }
                                     },
                                     height: {
-                                        value: "200px",
+                                        value: action.payload.initialDimensions?.height || "200px",
                                         input: {
                                             type: "text",
                                             displayName: "Height"
@@ -112,7 +122,7 @@ export function handleDragAndDropAction(state: EditorState, action: EditorAction
                                 element: "img",
                                 attributes: {
                                     className: {
-                                        value: "image",
+                                        value: action.payload.className || "image aspect-ratio-preserved",
                                         readonly: true,
                                         input: {
                                             type: "text",
@@ -149,6 +159,20 @@ export function handleDragAndDropAction(state: EditorState, action: EditorAction
                                             type: "text",
                                             displayName: "Height"
                                         }
+                                    },
+                                    objectFit: {
+                                        value: action.payload.style?.objectFit || "contain",
+                                        input: {
+                                            type: "select",
+                                            displayName: "Object Fit",
+                                            options: [
+                                                { value: "contain", text: "Contain" },
+                                                { value: "cover", text: "Cover" },
+                                                { value: "fill", text: "Fill" },
+                                                { value: "none", text: "None" },
+                                                { value: "scale-down", text: "Scale Down" }
+                                            ]
+                                        }
                                     }
                                 },
                                 metadata: {
@@ -159,14 +183,14 @@ export function handleDragAndDropAction(state: EditorState, action: EditorAction
                     }
                 };
 
-                // Calculate aspect ratio and update dimensions
-                getAspectRatio(action.payload.url).then((aspectRatio: number) => {
-                    if (parent) {
+                // Calculate aspect ratio and update dimensions if needed
+                if (parent && !action.payload.initialDimensions) {
+                    getAspectRatio(action.payload.url).then((aspectRatio: number) => {
                         const width = (parent.clientWidth * 0.90);
                         dropped.html.nodes[0].style.width.value = `${width.toFixed(3)}px`;
                         dropped.html.nodes[0].style.height.value = `${(width * (1 / aspectRatio)).toFixed(3)}px`;
-                    }
-                });
+                    });
+                }
             } else {
                 dropped = structuredClone(action.payload);
                 dropped.html.nodes.forEach((node) => {
