@@ -15,6 +15,7 @@ import { handleLoadStateAction } from "./actionHandlers/LoadStateHandler";
 import { handleUndoRedoAction } from "./actionHandlers/UndoRedoHandler";
 import { handleAddAction } from "./actionHandlers/addHandler";
 import { handleResizeAction } from "./actionHandlers/ResizeHandler";
+import { handleAttributeAction } from "./actionHandlers/AttributeHandler";
 import { DragAndDropState } from "state/dragAndDrop/DragAndDropReducer";
 import { parseId } from "./Helpers";
 import { findPrimaryNode, sanitizeClassName, sanitizeImageUrl, sanitizeWidthOrHeight } from "components/pages/app/Helpers";
@@ -109,6 +110,11 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     return handleUndoRedoAction(state, action);
   }
 
+  // Handle attribute changes
+  if (action.type === ActionType.ATTRIBUTE_CHANGED) {
+    return handleAttributeAction(state, action);
+  }
+
   // Group actions for action handler delegation //
   const MouseMovementActions = [
     ActionType.HOVER,
@@ -170,13 +176,13 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     const { section, index } = parseId(elementId);
     const container = state[section].html.nodes[index];
     
-    if (container && container.metadata?.childDirection === "horizontal") {
+    if (container && (container.metadata?.childDirection === "horizontal" || container.metadata?.childDirection === "vertical")) {
       // Create a new column
       const newColumn: StorableHtmlNode = {
         element: "div",
         attributes: {
           className: {
-            value: "vertical",
+            value: container.metadata?.childDirection === "horizontal" ? "vertical" : "horizontal",
             readonly: true,
             input: {
               type: "text",
@@ -239,7 +245,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
         metadata: {
           draggable: true,
           droppable: true,
-          childDirection: "vertical" as const,
+          childDirection: container.metadata?.childDirection === "horizontal" ? "vertical" : "horizontal",
           selectable: true
         }
       };
