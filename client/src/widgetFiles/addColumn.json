@@ -21,6 +21,14 @@
             }
           },
           "style": {
+            "display": {
+              "value": "flex",
+              "readonly": true
+            },
+            "flex-direction": {
+              "value": "column",
+              "readonly": true
+            },
             "flex-grow": {
               "value": "1",
               "input": {
@@ -77,15 +85,14 @@
               }
             }
           },
-          "children": [
-          ],
+          "children": [],
           "metadata": {
             "draggable": true,
             "droppable": true,
-            "childDirection": "horizontal",
+            "childDirection": "vertical",
             "selectable": true
           }
         }
       ]
     }
-  }
+}
