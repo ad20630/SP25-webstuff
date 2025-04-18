@@ -690,7 +690,12 @@ export const HtmlInterpreter = (props: Props) => {
           ...finalArgs,
           style: { 
             ...outputStyleObject, 
-            position: 'relative'
+            position: 'relative',
+            objectFit: outputStyleObject.objectFit || 'contain',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            width: 'auto',
+            height: 'auto'
           }
         }
       )
