@@ -15,19 +15,36 @@ const DraggableImage: React.FC<DraggableImageProps> = ({ img, onSelect }) => {
   const { dragRef, startDrag } = useDraggable({
     type: "image",
     url: img.src.medium,
-    alt: img.alt || "No description available"
+    alt: img.alt || "No description available",
+    className: "image aspect-ratio-preserved",
+    style: {
+      width: "100%",
+      height: "100%",
+      objectFit: "contain"
+    },
+    initialDimensions: {
+      width: "300px",
+      height: "200px"
+    }
   });
 
   return (
-    <div className="image-container">
+    <div className="image-container" style={{ width: "150px", height: "150px" }}>
       <img
         src={img.src.medium}
         alt={img.alt || "No description available"}
         onClick={() => onSelect(img.src.medium)}
         onMouseDown={startDrag}
         ref={dragRef as React.RefObject<HTMLImageElement>}
-        className="gallery-image"
-        style={{ cursor: "grab" }}
+        className="gallery-image aspect-ratio-preserved"
+        style={{ 
+          cursor: "grab",
+          objectFit: "contain",
+          maxWidth: "100%",
+          maxHeight: "100%",
+          width: "auto",
+          height: "auto"
+        }}
       />
     </div>
   );
