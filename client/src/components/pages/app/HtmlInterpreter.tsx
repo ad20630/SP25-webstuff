@@ -321,12 +321,16 @@ export const HtmlInterpreter = (props: Props) => {
     <div className="selected-element-ops">
       <BsPlusSquareFill
         className="icon add-item"
-        title="Add Column"
+        title={content.metadata?.childDirection === "horizontal" ? "Add Vertical Column" : "Add Horizontal Column"}
         color="#1c274c"
         onClick={() => handleAddColumn(id)}
       />
     </div>
   );
+  
+  // Check if this is a column container (either horizontal or vertical)
+  const isColumnContainer = (content.attributes.className?.value === "horizontal" || content.attributes.className?.value === "vertical") && 
+                           content.metadata?.childDirection;
   
   // const className:string = content.attributes["class"]
   let Element: ReactElement;
@@ -572,10 +576,6 @@ export const HtmlInterpreter = (props: Props) => {
   const isHeading = content.element === "h1" || content.element === "h2" || content.element === "h3" || 
                     content.attributes.headingtype?.value;
   
-  // Check if this is a column container
-  const isColumnContainer = content.attributes.className?.value === "horizontal" && 
-                           content.metadata?.childDirection === "horizontal";
-  
   // Determine the appropriate resize handles based on the widget type
   const getResizeHandles = () => {
     if (isLayout) {
@@ -616,9 +616,7 @@ export const HtmlInterpreter = (props: Props) => {
         width={currentWidth}
         height={currentHeight}
         onResizeStop={(_e: React.SyntheticEvent, data: ResizeCallbackData) => {
-          // For heading elements, use a special resize handler
           if (isHeading) {
-            // Update width, maintain auto height
             editorDispatch({ 
               type: ActionType.RESIZE_ELEMENT, 
               elementId: id, 
@@ -626,7 +624,6 @@ export const HtmlInterpreter = (props: Props) => {
               height: data.size.height
             });
           } else {
-            // Standard resize
             handleResizeStop(id, data.size.width, data.size.height);
           }
         }}
@@ -634,7 +631,7 @@ export const HtmlInterpreter = (props: Props) => {
         maxConstraints={getMaxConstraints()}
         resizeHandles={getResizeHandles()}
         draggableOpts={{ grid: [5, 5] }}
-        axis={isHeading ? 'both' : 'both'} // Allow both x and y movement for headings
+        axis={isHeading ? 'both' : 'both'}
       >
         {element === "img" ? (
           React.createElement(
@@ -660,7 +657,9 @@ export const HtmlInterpreter = (props: Props) => {
                 height: isHeading ? 'auto' : '100%',
                 overflow: isLayout ? 'auto' : 'visible',
                 cursor: 'move',
-                position: 'relative'
+                position: 'relative',
+                display: 'flex',
+                flexDirection: content.metadata?.childDirection === 'horizontal' ? 'row' : 'column'
               }
             },
             <>
@@ -680,7 +679,7 @@ export const HtmlInterpreter = (props: Props) => {
       alignItems: 'center',
       width: '100%',
       height: 'auto',
-      minHeight: '40px', // Add a minimum height to ensure visibility
+      minHeight: '40px',
       padding: '10px 0'
     } : {};
 
@@ -703,7 +702,9 @@ export const HtmlInterpreter = (props: Props) => {
           style: { 
             ...outputStyleObject, 
             position: 'relative',
-            ...navigationStyle
+            ...navigationStyle,
+            display: isColumnContainer ? 'flex' : undefined,
+            flexDirection: isColumnContainer ? (content.metadata?.childDirection === 'horizontal' ? 'row' : 'column') : undefined
           }
         },
         <>
