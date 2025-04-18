@@ -40,7 +40,7 @@
             "element": "img",
             "attributes": {
               "className": {
-                "value": "image", 
+                "value": "image aspect-ratio-preserved", 
                 "readonly": true,
                 "input": {
                     "type": "text",
@@ -69,6 +69,14 @@
                 "input": {
                   "type": "text",
                   "displayName": "Height"
+                }
+              },
+              "objectFit": {
+                "value": "contain",
+                "input": {
+                  "type": "select",
+                  "displayName": "Object Fit",
+                  "options": ["contain", "cover", "fill", "none", "scale-down"]
                 }
               }
             },
