@@ -1,17 +1,16 @@
 import { findPrimaryAttributes } from "components/pages/app/Helpers";
-import React, { ChangeEvent, useRef } from "react"; //Added useRef for ReactQuill handling
+import React, { ChangeEvent, useState, useRef } from "react"; //Added useRef for ReactQuill handling
 import { ActionType, useEditor } from "state/editor/EditorReducer";
 import { parseId } from "state/editor/Helpers";
-import { NodeAttribute} from "types/HtmlNodes";
+import { NodeAttribute, StorableHtmlNode } from "types/HtmlNodes";
 import ImageGallery from "./ImageGallery";
 import { Tooltip } from "react-tooltip"; // Handles hover-over tooltips
-import { Editor as TinyMCEEditor } from 'tinymce/tinymce';
-import BundledEditor from '../../BundledEditor.jsx'
+import ReactQuill from 'react-quill-new';
 
 type Props = {};
 
 const ElementSidebar = (props: Props) => {
-  //const [color, setColor] = React.useState({});
+  const [color, setColor] = React.useState({});
   const { state: editor, dispatch } = useEditor();
   let isImageElement = false;
 
@@ -20,7 +19,6 @@ const ElementSidebar = (props: Props) => {
     size: { value: "12px" },
   };
   let style: { [key: string]: NodeAttribute } = {};
-
 
   if (editor.selectedElementId) {
     const { section, index } = parseId(editor.selectedElementId);
@@ -40,13 +38,6 @@ const ElementSidebar = (props: Props) => {
     }
   }
 
- const editorRef = useRef<TinyMCEEditor | null>(null); //TinyMCE handling
-  const log = () => {
-    if (editorRef.current) {
-      console.log(editorRef.current.getContent());
-    }
-  }; 
-
   const buildInput = (
     source: { [key: string]: NodeAttribute },
     index: number,
@@ -54,6 +45,30 @@ const ElementSidebar = (props: Props) => {
     target: "style" | "attributes"
   ) => {
     const val = source[key];
+
+    // Special handling for column direction
+    if (key === "className" && val.value === "horizontal" || val.value === "vertical") {
+      return (
+        <div className="element-attribute-input" key={index}>
+          <div className="attribute-label-container">
+            <label htmlFor="">Column Direction</label>
+          </div>
+          <select
+            onChange={(ev: ChangeEvent<HTMLSelectElement>) => {
+              dispatch({
+                type: ActionType.CHANGE_COLUMN_DIRECTION,
+                elementId: editor.selectedElementId!,
+                direction: ev.currentTarget.value as "horizontal" | "vertical"
+              });
+            }}
+            value={val.value}
+          >
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical">Vertical</option>
+          </select>
+        </div>
+      );
+    }
 
     let input = (
       <input
@@ -68,7 +83,7 @@ const ElementSidebar = (props: Props) => {
         type={source[key].input?.type ?? "text"}
         value={source[key].value}
         readOnly={val.readonly ? true : false}
-        data-tooltip-id={key} // Handles tooltip association
+        data-tooltip-id={key}
       />
     );
 
@@ -76,21 +91,45 @@ const ElementSidebar = (props: Props) => {
       isImageElement = true;
     }
 
-    if (val.input?.type === "richtext" ) { //Handles richtext editing using TinyMCE
+    if (val.input && val.input.type === "richtext") {
       input = (
-        <BundledEditor 
-        initialValue={val.value || "hi"} //Dynamic assignment based on Widget value
-        onEditorChange={(content: string) => {
-          dispatch({
-            type: ActionType.ATTRIBUTE_CHANGED,
-            target: target,
-            attribute: key,
-            newValue: content,
-          });
-        }
-      }
-      
+        <ReactQuill 
+        className="quill-editor" //To force CSS styling due to visual glitches
+        onChange={(value) => {
+            dispatch({
+              type: ActionType.ATTRIBUTE_CHANGED,
+              target: target,
+              attribute: key,
+              newValue: value,
+            });
+          }}
+          theme = 'snow' //Quill editor theme
+          value={attributes[key]?.value || ""}
+          readOnly={val.readonly ? true : false}
+          data-tooltip-id={key} // Handles tooltip association
+
+          //Toolbar setup for Quill
+          modules={{
+              toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['blockquote', 'code-block'],
+                ['link', 'image', 'video'],
+              
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                [{ 'direction': 'rtl' }],                         // text direction
+              
+                [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+              
+                [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+              
+                ['clean']                                         // remove formatting button
+              ],
+          }}
         />
+        
       );
     }
 
@@ -143,7 +182,7 @@ const ElementSidebar = (props: Props) => {
             const attr = attributes[k];
 
             if (attr.hidden) {
-              return;
+              return null;
             }
 
             return buildInput(attributes, i, k, "attributes");
@@ -157,7 +196,7 @@ const ElementSidebar = (props: Props) => {
             const attr = style[k];
 
             if (attr.hidden) {
-              return;
+              return null;
             }
 
             return buildInput(style, i, k, "style");
