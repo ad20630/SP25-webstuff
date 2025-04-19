@@ -11,12 +11,14 @@
           "element": "div",
           "attributes": {
             "className": {
-              "value": "vertical", 
-              "readonly": true,
+              "value": "vertical",
               "input": {
-                  "type": "text",
-                  "displayName":"Class Name",
-                  "tooltip": "This cannot be changed."
+                "type": "select",
+                "displayName": "Column Direction",
+                "options": [
+                  { "value": "horizontal", "text": "Horizontal" },
+                  { "value": "vertical", "text": "Vertical" }
+                ]
               }
             }
           },
