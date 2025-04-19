@@ -55,30 +55,6 @@ const ElementSidebar = (props: Props) => {
   ) => {
     const val = source[key];
   
-    // Special handling for column direction
-    if (key === "className" && val.value === "horizontal" || val.value === "vertical") {
-      return (
-        <div className="element-attribute-input" key={index}>
-          <div className="attribute-label-container">
-            <label htmlFor="">Column Direction</label>
-          </div>
-          <select
-            onChange={(ev: ChangeEvent<HTMLSelectElement>) => {
-              dispatch({
-                type: ActionType.CHANGE_COLUMN_DIRECTION,
-                elementId: editor.selectedElementId!,
-                direction: ev.currentTarget.value as "horizontal" | "vertical"
-              });
-            }}
-            value={val.value}
-          >
-            <option value="horizontal">Horizontal</option>
-            <option value="vertical">Vertical</option>
-          </select>
-        </div>
-      );
-    }
-
     let input = (
       <input
         onChange={(ev: ChangeEvent<HTMLInputElement>) => {
