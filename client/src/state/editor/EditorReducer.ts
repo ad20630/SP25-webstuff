@@ -35,7 +35,6 @@ export enum ActionType {
   ADD_ELEMENT = "ADD_ELEMENT",
   ADD_COLUMN = "ADD_COLUMN",
   RESIZE_ELEMENT = "RESIZE_ELEMENT",
-  CHANGE_COLUMN_DIRECTION = "CHANGE_COLUMN_DIRECTION",
 
   VIEW_CODE = "VIEW_CODE",
   LOAD_STATE = "LOAD_STATE",
@@ -76,7 +75,6 @@ export type EditorAction =
   | { type: ActionType.ADD_ELEMENT; elementId: string}
   | { type: ActionType.ADD_COLUMN; elementId: string}
   | { type: ActionType.RESIZE_ELEMENT; elementId: string; width: number; height: number }
-  | { type: ActionType.CHANGE_COLUMN_DIRECTION; elementId: string; direction: "horizontal" | "vertical" }
   | { type: ActionType.UNDO }
   | { type: ActionType.REDO }
 
@@ -114,7 +112,45 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
 
   // Handle attribute changes
   if (action.type === ActionType.ATTRIBUTE_CHANGED) {
-    return handleAttributeAction(state, action);
+    const { target, attribute, newValue } = action;
+    const { section, index } = parseId(state.selectedElementId!);
+    const node = state[section].html.nodes[index];
+    
+    // Create a new state with the updated attribute
+    newState = { ...state };
+    
+    // Update the attribute value
+    newState[section].html.nodes[index][target][attribute] = {
+      ...node[target][attribute],
+      value: newValue
+    };
+    
+    // If this is a column direction change, update the metadata and flex-direction
+    if (target === "attributes" && attribute === "className" && 
+        (newValue === "horizontal" || newValue === "vertical")) {
+      const node = newState[section].html.nodes[index];
+      
+      // Update the node's metadata
+      node.metadata = {
+        ...node.metadata,
+        childDirection: newValue
+      };
+      
+      // Update the flex direction in the style
+      node.style = {
+        ...node.style,
+        "flex-direction": {
+          value: newValue === "horizontal" ? "row" : "column",
+          readonly: true
+        }
+      };
+    }
+    
+    // Update history
+    newState.history = [...newState.history.slice(0, newState.historyIndex + 1), newState];
+    newState.historyIndex++;
+    
+    return newState;
   }
 
   // Group actions for action handler delegation //
@@ -262,45 +298,6 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
         newState.history = [...newState.history.slice(0, newState.historyIndex + 1), newState];
         newState.historyIndex++;
       }
-    }
-  } else if (action.type === ActionType.CHANGE_COLUMN_DIRECTION) {
-    const { elementId, direction } = action;
-    const { section, index } = parseId(elementId);
-    const container = state[section].html.nodes[index];
-    
-    if (container && (container.metadata?.childDirection === "horizontal" || container.metadata?.childDirection === "vertical")) {
-      // Create a new state with the updated direction
-      const newState = { ...state };
-      const node = newState[section].html.nodes[index];
-      
-      // Update the node's metadata and className
-      node.metadata = {
-        ...node.metadata,
-        childDirection: direction
-      };
-      
-      node.attributes = {
-        ...node.attributes,
-        className: {
-          ...node.attributes.className,
-          value: direction
-        }
-      };
-      
-      // Update the flex direction in the style
-      node.style = {
-        ...node.style,
-        "flex-direction": {
-          value: direction === "horizontal" ? "row" : "column",
-          readonly: true
-        }
-      };
-      
-      // Update history
-      newState.history = [...newState.history.slice(0, newState.historyIndex + 1), newState];
-      newState.historyIndex++;
-      
-      return newState;
     }
   }
 
