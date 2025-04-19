@@ -22,39 +22,125 @@ export const Editor = () => {
 
   if (dragState.isDragging && editor.hoveredItemId && dragState.canDrop) {
     const {section, index} = parseId(editor.hoveredItemId);
-    const predictedIndex = getDropChildId(mouseState, editor, editor.hoveredItemId)
-
-
-    const previewObject:HtmlObject = {
-      metadata: {
-        type: "WIDGET"
-      },
-      html: {
-        nodes: [
-        {
-          element: "div",
-          style: {
-            width: { value: "100%" },
-            height: { value: "100%" },
-            position: { value: "relative" },
-            margin: { value: "3px" },
-            display: { value: "flex" },
-            alignItems: { value: "center" },
-            justifyContent: { value: "center" }
-          },
-          attributes: {
-            "className": {value: "preview"}
-          },
-          metadata: {
-            preview: true
-          }
-        }
-      ]
-      }
-    };
-
+    const predictedIndex = getDropChildId(mouseState, editor, editor.hoveredItemId);
     data[section] = structuredClone(editor[section]);
-    data[section] = insertDroppedElement(predictedIndex, editor, previewObject, editor.hoveredItemId)[section];
+    
+    // Only insert the actual dropped element when it's being dropped, not during drag
+    if (dragState.dragPayload) {
+      let htmlObject: HtmlObject;
+      
+      // Check if this is an image payload
+      if (dragState.dragPayload.type === "image") {
+        const imagePayload = dragState.dragPayload;
+        htmlObject = {
+          metadata: {
+            name: "Image",
+            tooltip: "A place to upload and display an Image",
+            type: "WIDGET",
+            icon: "image-icon"
+          },
+          html: {
+            nodes: [
+              {
+                element: "div",
+                attributes: {
+                  className: { value: "elementContainer" }
+                },
+                style: {
+                  width: {
+                    value: imagePayload.initialDimensions?.width || "300px",
+                    input: {
+                      type: "text",
+                      displayName: "Width"
+                    }
+                  },
+                  height: {
+                    value: imagePayload.initialDimensions?.height || "200px",
+                    input: {
+                      type: "text",
+                      displayName: "Height"
+                    }
+                  }
+                },
+                children: [1],
+                metadata: {
+                  draggable: true,
+                  selectable: true,
+                  resizable: true,
+                  type: "WIDGET"
+                }
+              },
+              {
+                element: "img",
+                attributes: {
+                  className: {
+                    value: imagePayload.className || "image aspect-ratio-preserved",
+                    readonly: true,
+                    input: {
+                      type: "text",
+                      displayName: "Class Name",
+                      tooltip: "This cannot be changed."
+                    }
+                  },
+                  src: {
+                    value: imagePayload.url,
+                    input: {
+                      type: "text",
+                      displayName: "File"
+                    }
+                  },
+                  alt: {
+                    value: imagePayload.alt || "Image",
+                    input: {
+                      type: "text",
+                      displayName: "Alt Text"
+                    }
+                  }
+                },
+                style: {
+                  width: {
+                    value: "100%",
+                    input: {
+                      type: "text",
+                      displayName: "Width"
+                    }
+                  },
+                  height: {
+                    value: "100%",
+                    input: {
+                      type: "text",
+                      displayName: "Height"
+                    }
+                  },
+                  objectFit: {
+                    value: imagePayload.style?.objectFit || "contain",
+                    input: {
+                      type: "select",
+                      displayName: "Object Fit",
+                      options: [
+                        { value: "contain", text: "Contain" },
+                        { value: "cover", text: "Cover" },
+                        { value: "fill", text: "Fill" },
+                        { value: "none", text: "None" },
+                        { value: "scale-down", text: "Scale Down" }
+                      ]
+                    }
+                  }
+                },
+                metadata: {
+                  primary: true
+                }
+              }
+            ]
+          }
+        };
+      } else {
+        // For non-image widgets, use the payload as is
+        htmlObject = dragState.dragPayload;
+      }
+      
+      data[section] = insertDroppedElement(predictedIndex, editor, htmlObject, editor.hoveredItemId)[section];
+    }
   }
 
   return (
