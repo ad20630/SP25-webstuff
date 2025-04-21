@@ -10,15 +10,17 @@ type Page = {
 
 type Props = {}
 
-const PageMenu = ({ page, onDelete, onClose, onSwitch, onUpdate }: { 
+const PageMenu = ({ page, onDelete, onClose, onSwitchSave, onSwitchNoSave, onUpdate }: { 
   page: Page, 
   onDelete: () => void, 
   onClose: () => void,
-  onSwitch: () => void,
+  onSwitchSave: () => void,
+  onSwitchNoSave: () => void,
   onUpdate: (name: string, subdomain: string) => void
 }) => {
   const [pagename, setPagename] = useState(page.name);
   const [subdomain, setSubdomain] = useState(page.subdomain);
+  const [showSubmenu, setShowSubmenu] = useState(false);
 
   const handlePagenameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -32,6 +34,9 @@ const PageMenu = ({ page, onDelete, onClose, onSwitch, onUpdate }: {
     onUpdate(pagename, newSubdomain);
   };
 
+  const handleSwitchClick = () => {
+    setShowSubmenu(!showSubmenu);
+  };
   return (
     <div className="page-menu">
       <input
@@ -48,7 +53,13 @@ const PageMenu = ({ page, onDelete, onClose, onSwitch, onUpdate }: {
         value={subdomain}
         onChange={handleSubdomainChange}
       />
-      <button className="menu-button switch-button" onClick={onSwitch}>Switch to Page</button>
+      <button className="menu-button switch-button" onClick={handleSwitchClick}>Switch to Page</button>
+      {showSubmenu && (
+        <div className="submenu">
+          <button className="menu-button submenu-button" onClick={onSwitchSave}>Switch and Save</button>
+          <button className="menu-button submenu-button" onClick={onSwitchNoSave}>Switch without Saving</button>
+        </div>
+      )}
       <button className="menu-button delete-button" onClick={onDelete}>Delete Page</button>
       <button className="menu-button close-button" onClick={onClose}>Close</button>
     </div>
@@ -64,8 +75,14 @@ const MappingSidebar = (props: Props) => {
     setSelectedPage(selectedPage === pageId ? null : pageId);
   };
 
-  const handleSwitchPage = (pageId: number) => {
-    if (currentPage !== null) {
+  const handleDeletePage = (pageId: number) => {
+    if (window.confirm('Are you sure you want to delete this page?')) {
+      deletePage(pageId);
+    }
+  };
+
+  const handleSwitchPage = (pageId: number, isSaving: boolean) => {
+    if (currentPage !== null && isSaving) {
       saveToLocalStorage(currentPage.toString());
     }
     setCurrentPage(pageId);
@@ -93,8 +110,9 @@ const MappingSidebar = (props: Props) => {
             {selectedPage === page.id && (
               <PageMenu 
                 page={page}
-                onSwitch={() => handleSwitchPage(page.id)}
-                onDelete={() => deletePage(page.id)}
+                onSwitchSave={() => handleSwitchPage(page.id, true)}
+                onSwitchNoSave={() => handleSwitchPage(page.id, false)}
+                onDelete={() => handleDeletePage(page.id)}
                 onClose={() => setSelectedPage(null)}
                 onUpdate={(name, subdomain) => updatePage(page.id, name, subdomain)}
               />
