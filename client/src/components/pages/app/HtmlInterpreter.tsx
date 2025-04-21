@@ -14,9 +14,9 @@ import { RenderableHtmlNode, StorableHtmlNode } from "types/HtmlNodes";
 import "styles/modal.css";
 import "styles/textbox.css";
 import { ActionType, useEditor } from "state/editor/EditorReducer";
-import TrashIcon from "../../../assets/images/trash-icon.svg";
-import CopyIcon from "../../../assets/images/copy-icon.svg";
-import CodeIcon from "../../../assets/images/code-icon.svg";
+import { BsTrash3Fill } from "react-icons/bs";
+import { FaCopy } from "react-icons/fa";
+import { FaCode } from "react-icons/fa";
 import { BsPlusSquareFill } from "react-icons/bs";
 import { useDragAndDropContext } from "state/dragAndDrop/DragAndDropReducer";
 import { useDraggable } from "state/dragAndDrop/hooks/useDraggable";
@@ -250,9 +250,7 @@ export const HtmlInterpreter = (props: Props) => {
 
   const elementOperations = (
     <div className="selected-element-ops">
-      <img
-        src={TrashIcon}
-        alt="Delete Icon"
+      <BsTrash3Fill
         title="Delete"
         className="icon delete-icon"
         onClick={() => {
@@ -261,17 +259,13 @@ export const HtmlInterpreter = (props: Props) => {
         }}
       />
 
-      <img
-        src={CopyIcon}
-        alt="Copy Icon"
+      <FaCopy
         title="Copy"
         className="icon copy-icon"
         onClick={() => handleCopyClick(id)}
       />
 
-      <img
-        src={CodeIcon}
-        alt="View Code"
+      <FaCode
         title="View"
         className="icon view-code-icon"
         onClick={() => handleViewClick(id)}
@@ -280,9 +274,7 @@ export const HtmlInterpreter = (props: Props) => {
   );  
   const elementSectionOperations = ( //Same as elementOperations but with an added "Add" button
     <div className="selected-element-ops">
-      <img
-        src={TrashIcon}
-        alt="Delete Icon"
+      <BsTrash3Fill
         title="Delete"
         className="icon delete-icon"
         onClick={() => {
@@ -291,17 +283,13 @@ export const HtmlInterpreter = (props: Props) => {
         }}
       />
 
-      <img
-        src={CopyIcon}
-        alt="Copy Icon"
+      <FaCopy
         title="Copy"
         className="icon copy-icon"
         onClick={() => handleCopyClick(id)}
       />
 
-      <img
-        src={CodeIcon}
-        alt="View Code"
+      <FaCode
         title="View"
         className="icon view-code-icon"
         onClick={() => handleViewClick(id)}
