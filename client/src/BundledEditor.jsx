@@ -54,11 +54,11 @@ import 'tinymce/skins/ui/oxide/content';
 import React from 'react';
 
 
-export default function BundledEditor({ initialValue, onEditorChange }) {
+export default function BundledEditor({ value, onEditorChange }) {
   return (
     <Editor
       licenseKey='gpl'
-      initialValue={initialValue} // use value instead of initialValue in init
+      value={value} // use value instead of initialValue in init
       onEditorChange={onEditorChange}
       init={{
         height: 500,
