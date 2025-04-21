@@ -253,6 +253,7 @@ export const HtmlInterpreter = (props: Props) => {
       <BsTrash3Fill
         title="Delete"
         className="icon delete-icon"
+        color = "#1c274c"
         onClick={() => {
           console.log("clicked!");
           handleDeleteClick(id);
@@ -262,12 +263,14 @@ export const HtmlInterpreter = (props: Props) => {
       <FaCopy
         title="Copy"
         className="icon copy-icon"
+        color = "#1c274c"
         onClick={() => handleCopyClick(id)}
       />
 
       <FaCode
         title="View"
         className="icon view-code-icon"
+        color = "#1c274c"
         onClick={() => handleViewClick(id)}
       />
     </div>
@@ -277,6 +280,7 @@ export const HtmlInterpreter = (props: Props) => {
       <BsTrash3Fill
         title="Delete"
         className="icon delete-icon"
+        color = "#1c274c"
         onClick={() => {
           console.log("clicked!");
           handleDeleteClick(id);
@@ -286,12 +290,14 @@ export const HtmlInterpreter = (props: Props) => {
       <FaCopy
         title="Copy"
         className="icon copy-icon"
+        color = "#1c274c"
         onClick={() => handleCopyClick(id)}
       />
 
       <FaCode
         title="View"
         className="icon view-code-icon"
+        color = "#1c274c"
         onClick={() => handleViewClick(id)}
       />
 
