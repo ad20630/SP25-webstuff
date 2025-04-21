@@ -79,7 +79,7 @@ const ElementSidebar = (props: Props) => {
     if (val.input?.type === "richtext" ) { //Handles richtext editing using TinyMCE
       input = (
         <BundledEditor 
-        initialValue={val.value || "hi"} //Dynamic assignment based on Widget value
+        value={val.value || " "} //Dynamic assignment based on Widget value
         onEditorChange={(content: string) => {
           dispatch({
             type: ActionType.ATTRIBUTE_CHANGED,
