@@ -50,6 +50,7 @@ export enum ActionType {
   ELEMENT_UNSELECTED = "ELEMENT_UNSELECTED",
 
   ATTRIBUTE_CHANGED = "ATTRIBUTE_CHANGED",
+  UPDATE_SEO_METADATA = "UPDATE_SEO_METADATA",
   UNDO = "UNDO",
   REDO = "REDO"
 }
@@ -71,6 +72,7 @@ export type EditorAction =
   | { type: ActionType.COPY_ELEMENT; elementId: string }
   | { type: ActionType.VIEW_CODE; elementId: string }
   | { type: ActionType.ATTRIBUTE_CHANGED; target:"style"|"attributes"; attribute:string; newValue:string }
+  | { type: ActionType.UPDATE_SEO_METADATA; metadata: any }
   | { type: ActionType.LOAD_STATE; payload: EditorState }
   | { type: ActionType.ADD_ELEMENT; elementId: string}
   | { type: ActionType.ADD_COLUMN; elementId: string}
@@ -92,6 +94,7 @@ export type EditorState = {
   footer: HtmlObject;
   history: EditorState[];
   historyIndex: number;
+  seoMetadata: any;
 };
 
 export type DropTargetData = {
@@ -108,6 +111,20 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
   // Handle undo/redo actions first
   if (action.type === ActionType.UNDO || action.type === ActionType.REDO) {
     return handleUndoRedoAction(state, action);
+  }
+
+  // Handle SEO metadata updates
+  if (action.type === ActionType.UPDATE_SEO_METADATA) {
+    newState = {
+      ...state,
+      seoMetadata: action.metadata
+    };
+    
+    // Update history
+    newState.history = [...newState.history.slice(0, newState.historyIndex + 1), newState];
+    newState.historyIndex++;
+    
+    return newState;
   }
 
   // Handle attribute changes
