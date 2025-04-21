@@ -464,7 +464,8 @@ export const useSaveLoadActions = () => {
     const jsonString = JSON.stringify({
       header: editorState.header,
       body: editorState.body,
-      footer: editorState.footer
+      footer: editorState.footer,
+      seoMetadata: editorState.seoMetadata
     });
     // Store the serialized state in local storage
     localStorage.setItem(name, jsonString);
@@ -477,26 +478,42 @@ export const useSaveLoadActions = () => {
     if (jsonString) {
       // Parse the serialized state into a JavaScript object
       const newState = JSON.parse(jsonString);
+      // Ensure the state has the correct structure
+      const formattedState: EditorState = {
+        isDragging: false,
+        isEditing: false,
+        draggedItemId: null,
+        hoveredItemId: null,
+        selectedElementId: null,
+        cursorPosition: null,
+        widgets: [],
+        seoMetadata: newState.seoMetadata || {
+          title: '',
+          description: '',
+          keywords: '',
+          ogTitle: '',
+          ogDescription: '',
+          ogImage: '',
+          canonicalUrl: '',
+          index: 'index',
+          follow: 'follow'
+        },
+        header: newState.header,
+        body: newState.body,
+        footer: newState.footer,
+        history: [],
+        historyIndex: 0
+      };
       // Dispatch a load state action to update the editor with the loaded state
       editorDispatch({
         type: ActionType.LOAD_STATE,   
-        payload: newState
+        payload: formattedState
       });
     }
   };
 
   const loadFromTemplate = (temp: string | any) => {
-    let newState;
-    if (typeof temp === 'string') {
-      newState = JSON.parse(temp);
-    } else {
-      newState = temp;
-    }
-
-    // handle template wrappers
-    const templateData = newState;
-
-    // Ensure the state has the correct structure
+    const template = typeof temp === "string" ? JSON.parse(temp) : temp;
     const formattedState: EditorState = {
       isDragging: false,
       isEditing: false,
@@ -505,15 +522,25 @@ export const useSaveLoadActions = () => {
       selectedElementId: null,
       cursorPosition: null,
       widgets: [],
+      seoMetadata: {
+        title: '',
+        description: '',
+        keywords: '',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: '',
+        canonicalUrl: '',
+        index: 'index',
+        follow: 'follow'
+      },
+      header: template.header,
+      body: template.body,
+      footer: template.footer,
       history: [],
-      historyIndex: -1,
-      header: templateData.header || { metadata: { type: "PAGE_SECTION" }, html: { nodes: [] } },
-      body: templateData.body || { metadata: { type: "PAGE_SECTION" }, html: { nodes: [] } },
-      footer: templateData.footer || { metadata: { type: "PAGE_SECTION" }, html: { nodes: [] } }
+      historyIndex: 0
     };
-
     editorDispatch({
-      type: ActionType.LOAD_STATE,   
+      type: ActionType.LOAD_STATE,
       payload: formattedState
     });
   };
