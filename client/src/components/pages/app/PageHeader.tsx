@@ -6,7 +6,7 @@ import { ActionType } from "state/editor/EditorReducer";
 import { usePages } from "state/pages/PagesContext";
 
 const PageHeader = () => {
-  const { saveToLocalStorage, loadFromLocalStorage } = useSaveLoadActions();
+  const { saveToFile, loadFromFile, loadFromLocalStorage } = useSaveLoadActions();
   const { state: editorState, dispatch: editorDispatch } = useEditor();
   const { pages, currentPage, setCurrentPage } = usePages();
   const [saveMessage, setSaveMessage] = useState("Save");
@@ -31,7 +31,7 @@ const PageHeader = () => {
   }, [editorDispatch]);
 
   const handleSaveClick = () => {
-    saveToLocalStorage(currentPage.toString());
+    saveToFile(currentPage.toString());
     setSaveMessage("Saved!");
     setTimeout(() => {
       setSaveMessage("Save");
@@ -39,7 +39,7 @@ const PageHeader = () => {
   };
 
   const handleLoadClick = () => {
-    loadFromLocalStorage(currentPage.toString());
+    loadFromFile();
     setLoadMessage("Loaded!");
     setTimeout(() => setLoadMessage("Load"), 2000);
   };
@@ -124,3 +124,4 @@ const PageHeader = () => {
 };
 
 export default PageHeader;
+
