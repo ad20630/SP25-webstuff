@@ -18,6 +18,24 @@ export const EditorContext = createContext<EditorContext>(null);
 
 export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const initialState: EditorState = {
+    isDragging: false,
+    isEditing: false,
+    draggedItemId: null,
+    hoveredItemId: null,
+    selectedElementId: null,
+    cursorPosition: null,
+    widgets: [],
+    seoMetadata: {
+      title: '',
+      description: '',
+      keywords: '',
+      ogTitle: '',
+      ogDescription: '',
+      ogImage: '',
+      canonicalUrl: '',
+      index: 'index',
+      follow: 'follow'
+    },
     header: {
       metadata: {
         type: "PAGE_SECTION",
@@ -72,78 +90,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         ],
       },
     },
-    widgets: [],
-    selectedElementId: null,
-    hoveredItemId: null,
-    isDragging: false,
-    isEditing: false,
-    cursorPosition: null,
-    draggedItemId: null,
-    history: [{
-      isDragging: false,
-      isEditing: false,
-      draggedItemId: null,
-      hoveredItemId: null,
-      selectedElementId: null,
-      cursorPosition: null,
-      widgets: [],
-      header: {
-        metadata: {
-          type: "PAGE_SECTION",
-        },
-        html: {
-          nodes: [
-            {
-              element: "div",
-              attributes: {
-                className: { value: "header-root" },
-              },
-              style: {},
-              children: [],
-              metadata: { childDirection: "horizontal", droppable: true },
-            },
-          ],
-        },
-      },
-      body: {
-        metadata: {
-          type: "PAGE_SECTION",
-        },
-        html: {
-          nodes: [
-            {
-              element: "div",
-              children: [],
-              attributes: {
-                className: { value: "body-root" },
-              },
-              style: {},
-              metadata: { childDirection: "vertical", droppable: true },
-            },
-          ],
-        },
-      },
-      footer: {
-        metadata: {
-          type: "PAGE_SECTION",
-        },
-        html: {
-          nodes: [
-            {
-              element: "div",
-              children: [],
-              attributes: {
-                className: { value: "footer-root" },
-              },
-              style: {},
-              metadata: { childDirection: "horizontal", droppable: true },
-            },
-          ],
-        },
-      },
-      history: [],
-      historyIndex: 0
-    }],
+    history: [],
     historyIndex: 0
   };
 
