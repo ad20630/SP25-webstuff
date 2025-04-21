@@ -74,4 +74,145 @@
     margin: 10px 0;
     padding: 0 10px;
   }
+
+  .seo-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+
+    h3 {
+      margin-bottom: 1rem;
+      color: #333;
+      font-size: 1.1rem;
+    }
+  }
+
+  .seo-field {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #444;
+    }
+
+    .tooltip-icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-left: 4px;
+      background: #666;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 16px;
+      font-size: 12px;
+      cursor: help;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+  }
+
+  .character-count {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+  }
+
+  .character-count-ok {
+    border-color: #28a745;
+  }
+
+  .character-count-warning {
+    border-color: #ffc107;
+  }
+
+  .character-count-error {
+    border-color: #dc3545;
+  }
+
+  .og-image-preview {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+
+  .search-preview {
+    background: white;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 1rem;
+
+    .search-title {
+      color: #1a0dab;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .search-url {
+      color: #006621;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .search-description {
+      color: #545454;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  }
+
+  .html-preview {
+    background: #f8f9fa;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 1rem;
+    overflow-x: auto;
+
+    .html-code {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #333;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+
+      // Syntax highlighting
+      .tag { color: #905; }
+      .attr { color: #690; }
+      .value { color: #07a; }
+      .comment { color: #999; }
+    }
+  }
 } 
