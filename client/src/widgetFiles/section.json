@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "Row",
-    "tooltip": "Creates a row to drop widgets in",
+    "name": "Section",
+    "tooltip": "Creates a section to drop widgets in",
     "type": "WIDGET",
     "icon": "row-icon"
   },
@@ -23,7 +23,8 @@
         "style": {
           "display": {
             "value": "flex",
-            "readonly": true
+            "readonly": true,
+            "hidden": true
           },
           "flex-direction": {
             "value": "row",

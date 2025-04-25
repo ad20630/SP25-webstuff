@@ -1,7 +1,7 @@
 {
     "metadata": {
-      "name": "3 Columns",
-      "tooltip": "Creates three columns",
+      "name": "3 Sections",
+      "tooltip": "Creates three sections",
       "type": "WIDGET",
       "icon": "two-columns-icon"
     },
@@ -14,7 +14,7 @@
               "value": "horizontal",
               "input": {
                 "type": "select",
-                "displayName": "Column Direction",
+                "displayName": "Section Direction",
                 "options": [
                   { "value": "horizontal", "text": "Horizontal" },
                   { "value": "vertical", "text": "Vertical" }

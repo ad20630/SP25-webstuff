@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "name": "2 Columns",
-    "tooltip": "Creates two columns",
+    "name": "2 Sections",
+    "tooltip": "Creates two sections",
     "type": "WIDGET",
     "icon": "two-columns-icon"
   },
@@ -14,7 +14,7 @@
             "value": "horizontal",
             "input": {
               "type": "select",
-              "displayName": "Column Direction",
+              "displayName": "Section Direction",
               "options": [
                 { "value": "horizontal", "text": "Horizontal" },
                 { "value": "vertical", "text": "Vertical" }

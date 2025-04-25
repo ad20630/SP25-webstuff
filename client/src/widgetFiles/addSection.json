@@ -1,7 +1,7 @@
 {
     "metadata": {
-      "name": "Column Child",
-      "tooltip": "Creates new column",
+      "name": "Section Child",
+      "tooltip": "Creates new section",
       "type": "WIDGET",
       "icon": "two-columns-icon"
     },

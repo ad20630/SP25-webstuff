@@ -1,7 +1,7 @@
 import { ActionType, EditorAction, EditorState } from "../EditorReducer";
 import { sectionFromId, deepCloneNode, findParentNode } from "../Helpers";
 import Widget from "components/pages/app/widgets/Widget";
-import vertical from "widgetFiles/addColumn.json";
+import vertical from "widgetFiles/addSection.json";
 import navChild from "widgetFiles/addNav.json";
 import { NodeAttribute } from "types/HtmlNodes";
 
