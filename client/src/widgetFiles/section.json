@@ -10,15 +10,17 @@
       {
         "element": "div",
         "attributes": {
-          "className": {
-            "value": "horizontal", 
-            "readonly": true,
-            "input": {
-                "type": "text",
-                "displayName":"Class Name",
-                "tooltip": "This cannot be changed."
+            "className": {
+              "value": "vertical",
+              "input": {
+                "type": "select",
+                "displayName": "Section Direction",
+                "options": [
+                  { "value": "horizontal", "text": "Horizontal" },
+                  { "value": "vertical", "text": "Vertical" }
+                ]
+              }
             }
-          }
         },
         "style": {
           "display": {
@@ -28,7 +30,8 @@
           },
           "flex-direction": {
             "value": "row",
-            "readonly": true
+            "readonly": true,
+            "hidden": true
           },
           "background-color":{
             "value": "",

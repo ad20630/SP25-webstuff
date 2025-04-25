@@ -38,7 +38,7 @@
               "value": "vertical",
               "input": {
                 "type": "select",
-                "displayName": "Column Direction",
+                "displayName": "Section Direction",
                 "options": [
                   { "value": "horizontal", "text": "Horizontal" },
                   { "value": "vertical", "text": "Vertical" }
@@ -51,7 +51,7 @@
                 "value": "1",
                 "input": {
                     "type": "select",
-                    "displayName": "Column Ratio",
+                    "displayName": "Section Ratio",
                     "options": [
                         {"value": "1", "text": "Equal (1:1:1)"},
                         {"value": "2", "text": "Wide Left (2:1:1)"},
@@ -65,7 +65,7 @@
               "value": "",
               "input": {
                 "type": "color",
-                "displayName": "Background Color 1"
+                "displayName": "Background Color"
               }
           },
           "border-color":{
@@ -125,7 +125,7 @@
               "value": "vertical",
               "input": {
                 "type": "select",
-                "displayName": "Column Direction",
+                "displayName": "Section Direction",
                 "options": [
                   { "value": "horizontal", "text": "Horizontal" },
                   { "value": "vertical", "text": "Vertical" }
@@ -138,7 +138,7 @@
                 "value": "1",
                 "input": {
                     "type": "select",
-                    "displayName": "Column Ratio",
+                    "displayName": "Section Ratio",
                     "options": [
                         {"value": "1", "text": "Equal (1:1:1)"},
                         {"value": "2", "text": "Wide Middle (1:2:1)"},
@@ -152,7 +152,7 @@
               "value": "",
               "input": {
                 "type": "color",
-                "displayName": "Background Color 2"
+                "displayName": "Background Color"
               }
           },
           "border-color":{
@@ -212,7 +212,7 @@
                 "value": "vertical",
                 "input": {
                   "type": "select",
-                  "displayName": "Column Direction",
+                  "displayName": "Section Direction",
                   "options": [
                     { "value": "horizontal", "text": "Horizontal" },
                     { "value": "vertical", "text": "Vertical" }
@@ -225,7 +225,7 @@
                 "value": "1",
                 "input": {
                     "type": "select",
-                    "displayName": "Column Ratio",
+                    "displayName": "Section Ratio",
                     "options": [
                         {"value": "1", "text": "Equal (1:1:1)"},
                         {"value": "2", "text": "Wide Right (1:1:2)"},
@@ -239,7 +239,7 @@
               "value": "",
               "input": {
                 "type": "color",
-                "displayName": "Background Color 3"
+                "displayName": "Background Color"
               }
           },
           "border-color":{

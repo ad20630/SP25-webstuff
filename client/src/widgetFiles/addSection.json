@@ -14,7 +14,7 @@
               "value": "vertical",
               "input": {
                 "type": "select",
-                "displayName": "Column Direction",
+                "displayName": "Section Direction",
                 "options": [
                   { "value": "horizontal", "text": "Horizontal" },
                   { "value": "vertical", "text": "Vertical" }
@@ -29,7 +29,8 @@
             },
             "flex-direction": {
               "value": "column",
-              "readonly": true
+              "readonly": true,
+              "hidden": true
             },
             "flex-grow": {
               "value": "1",

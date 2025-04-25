@@ -25,11 +25,13 @@
         "style": {
           "display": {
             "value": "flex",
-            "readonly": true
+            "readonly": true,
+            "hidden": true
           },
           "flex-direction": {
             "value": "row",
-            "readonly": true
+            "readonly": true,
+            "hidden": true
           }
         },
         "children": [1,2],
@@ -47,7 +49,7 @@
             "value": "vertical",
             "input": {
               "type": "select",
-              "displayName": "Column Direction",
+              "displayName": "Section Direction",
               "options": [
                 { "value": "horizontal", "text": "Horizontal" },
                 { "value": "vertical", "text": "Vertical" }
@@ -60,7 +62,7 @@
             "value": "1",
             "input": {
               "type": "select",
-              "displayName": "Column Ratio",
+              "displayName": "Section Ratio",
               "options": [
                 {"value": "1", "text": "Equal (1:1)"},
                 {"value": "2", "text": "Wide Left (2:1)"},
@@ -134,7 +136,7 @@
             "value": "vertical",
             "input": {
               "type": "select",
-              "displayName": "Column Direction",
+              "displayName": "Section Direction",
               "options": [
                 { "value": "horizontal", "text": "Horizontal" },
                 { "value": "vertical", "text": "Vertical" }
@@ -147,7 +149,7 @@
             "value": "1",
             "input": {
               "type": "select",
-              "displayName": "Column Ratio",
+              "displayName": "Section Ratio",
               "options": [
                 {"value": "1", "text": "Equal (1:1)"},
                 {"value": "0.5", "text": "Wide Left (1:2)"},
