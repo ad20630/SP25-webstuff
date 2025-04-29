@@ -59,12 +59,16 @@
               },
               "autoplay": {
                 "value":"true",
-                "input":{
-                  "type":"text",
-                  "displayName":"AutoPlay"
-                }
+                "input": {
+                  "type": "select",
+                  "displayName": "AutoPlay",
+                  "options": [
+                    { "value": "true", "text": "True" },
+                    { "value": "false", "text": "False" }
+                  ]
               }
-            },
+            }
+          },
             "style": {
               "width": {
                 "value": "100%",
