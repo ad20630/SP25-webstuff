@@ -11,13 +11,13 @@ import BundledEditor from '../../BundledEditor.jsx'
 type Props = {};
 
 const ElementSidebar = (props: Props) => {
-  //const [color, setColor] = React.useState({});
   const { state: editor, dispatch } = useEditor();
   let isImageElement = false;
 
   let attributes: { [key: string]: NodeAttribute } = {
-    font: { value: "Helvetica" },
-    size: { value: "12px" },
+    font: { value: "Helvetica", hidden: true }, 
+    size: { value: "12px", hidden: true },
+    Text: { value: "Select a Block to Edit Values!", readonly: true}
   };
   let style: { [key: string]: NodeAttribute } = {};
 
