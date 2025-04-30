@@ -64,8 +64,20 @@ export default function BundledEditor({ value, onEditorChange }) {
         height: 500,
         menubar: false,
         promotion: false,
-        toolbar1: 'undo redo link | blocks | removeformat',
-        toolbar2: 'bold italic forecolor alignment| bullist numlist outdent indent',
+        toolbar1: 'undo redo outdent indent blocks | fontfamily | fontsizeinput ',
+        toolbar2: 'forecolor alignment formatting  link bullist numlist',
+        toolbar_groups: {
+          alignment: {
+            icon: 'align-justify',
+            tooltip: 'Alignment',
+            items: 'alignleft aligncenter alignright alignjustify'
+          },
+          formatting: {
+            icon: 'bold',
+            tooltip: 'Formatting',
+            items: 'bold italic underline strikethrough subscript superscript'
+          }
+        },
         plugins: [
           'advlist', 'autolink', 'lists', 'link',
           'searchreplace', 'visualblocks', 'wordcount'
