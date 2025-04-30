@@ -275,9 +275,11 @@ export const HtmlInterpreter = (props: Props) => {
       />
     </div>
   );  
-  const elementSectionOperations = ( //Same as elementOperations but with an added "Add" button
+  
+  // Add column operations version of elementOperations
+  const columnOperations = (
     <div className="selected-element-ops">
-      <BsTrash3Fill
+            <BsTrash3Fill
         title="Delete"
         className="icon delete-icon"
         color = "#1c274c"
@@ -300,19 +302,6 @@ export const HtmlInterpreter = (props: Props) => {
         color = "#1c274c"
         onClick={() => handleViewClick(id)}
       />
-
-      <BsPlusSquareFill
-        className="icon add-item"
-        title = "Add Section"
-        color = "#1c274c"
-        onClick={() => handleAddClick(id)}
-      />
-    </div>
-  );
-  
-  // Add column operations
-  const columnOperations = (
-    <div className="selected-element-ops">
       <BsPlusSquareFill
         className="icon add-item"
         title={content.metadata?.childDirection === "horizontal" ? "Add Vertical Column" : "Add Horizontal Column"}
@@ -512,8 +501,8 @@ export const HtmlInterpreter = (props: Props) => {
   
 //Displays options when element is selected - navigation and section elements get an additional "Add" button
   if (editorState.selectedElementId === id) {
-    if (content.attributes["className"].value ==="vertical" || content.attributes["className"].value === "navigation"){
-    children = [elementSectionOperations, ...children];
+    if (isColumnContainer){
+    children = [columnOperations, ...children];
     }
     else{
       children = [elementOperations, ...children];

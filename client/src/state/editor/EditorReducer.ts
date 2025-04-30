@@ -103,6 +103,7 @@ export type DropTargetData = {
 // Define a reducer to manage the state of the editor
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
 
+  
   // Group actions for action handler delegation //
   const MouseMovementActions = [
     ActionType.HOVER,
@@ -167,8 +168,92 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     }
    if(ResizeElementActions.includes(action.type)){
     return handleResizeAction(state, action);
-  }}
-
+  }
+  if(action.type === ActionType.ADD_COLUMN){
+    const { elementId } = action;
+    const { section, index } = parseId(elementId);
+    const container = state[section].html.nodes[index];
+    if (container && (container.metadata?.childDirection === "horizontal" || container.metadata?.childDirection === "vertical")) {
+      // Create a new column
+      const newColumn: StorableHtmlNode = {
+        element: "div",
+        attributes: {
+          className: {
+            value: container.metadata?.childDirection === "horizontal" ? "vertical" : "horizontal",
+            readonly: true,
+            input: {
+              type: "text",
+              displayName: "Class Name",
+              tooltip: "This cannot be changed."
+            }
+          }
+        },
+        style: {
+          "background-color": {
+            value: "",
+            input: {
+              type: "color",
+              displayName: "Background Color"
+            }
+          },
+          "border-color": {
+            value: "",
+            input: {
+              type: "color",
+              displayName: "Border Color"
+            }
+          },
+          "border-style": {
+            value: "",
+            input: {
+              type: "select",
+              displayName: "Border Style",
+              options: [
+                { value: "none", text: "None" },
+                { value: "solid", text: "Solid" },
+                { value: "double", text: "Double" },
+                { value: "dotted", text: "Dotted" },
+                { value: "dashed", text: "Dashed" },
+                { value: "groove", text: "Grooved" },
+                { value: "ridge", text: "Ridged" },
+                { value: "inset", text: "Inset" },
+                { value: "outset", text: "Outset" },
+                { value: "hidden", text: "Hidden" }
+              ]
+            }
+          },
+          "border-width": {
+            value: "",
+            input: {
+              type: "select",
+              displayName: "Border Thickness",
+              options: [
+                { value: "0px", text: "Invisible" },
+                { value: "1px", text: "Extra Thin" },
+                { value: "2.5px", text: "Thin" },
+                { value: "3.5px", text: "Standard" },
+                { value: "4.5px", text: "Thick" },
+                { value: "6px", text: "Extra Thick" }
+              ]
+            }
+          }
+        },
+        children: [],
+        metadata: {
+          draggable: true,
+          droppable: true,
+          childDirection: container.metadata?.childDirection === "horizontal" ? "vertical" : "horizontal",
+          selectable: true
+        }
+      };
+      if (state[section].html.nodes[index].children) {
+        state[section].html.nodes[index].children.push(state[section].html.nodes.length);
+      }
+        state[section].html.nodes.push(newColumn);
+  }
+}
+}
+  
   if(action.type === ActionType.ATTRIBUTE_CHANGED){
     if(!state.selectedElementId){
       return state;
