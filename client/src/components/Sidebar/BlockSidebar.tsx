@@ -7,7 +7,7 @@ import textbox from "widgetFiles/textbox.json"
 import heading from "widgetFiles/heading.json"
 import image from "widgetFiles/image.json"
 import logo from "widgetFiles/logo.json"
-import navigation from "widgetFiles/navigation.json"
+//import navigation from "widgetFiles/navigation.json" //Navigation has been removed until it can be properly implemented
 import video from "widgetFiles/video.json"
 import audio from "widgetFiles/audio.json"
 import { HtmlObject } from "types/HtmlObject";
@@ -25,7 +25,7 @@ const BlockSidebar = (props: Props) => {
   const heading1D: HtmlObject = heading as unknown as HtmlObject;
   const imageD: HtmlObject = image as unknown as HtmlObject;
   const logoD: HtmlObject = logo as unknown as HtmlObject;
-  const nav: HtmlObject = navigation as unknown as HtmlObject;
+  //const nav: HtmlObject = navigation as unknown as HtmlObject; //Navigation has been removed until it can be properly implemented
   const videoD: HtmlObject = video as unknown as HtmlObject;
   const audioD: HtmlObject = audio as unknown as HtmlObject;
 
@@ -35,7 +35,7 @@ const BlockSidebar = (props: Props) => {
       editorDispatch({
         type: ActionType.FETCHED_WIDGETS,
         widgets: [horizontalD,  twoColD, threeColD, textboxD,
-           heading1D, imageD, logoD, nav, videoD, audioD],
+           heading1D, imageD, logoD, videoD, audioD], //When navigation is working, add it back to this array
       });
     }
   });
