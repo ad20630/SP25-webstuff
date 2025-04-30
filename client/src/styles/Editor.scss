@@ -177,8 +177,9 @@ div.elementContainer{
 }
 
 div.audioContainer{
-  border: 5px solid orange;
-  display: flex;
+  border: 5px invisible orange;
+  height: 50px;
+  //display: flex;
 }
 
 div.videoContainer{
