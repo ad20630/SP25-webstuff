@@ -57,20 +57,6 @@
               }
             },
             "style": {
-              "width": {
-                "value": "100%",
-                "input": {
-                  "type": "text",
-                  "displayName": "Width"
-                }
-              },
-              "height": {
-                "value": "100%",
-                "input": {
-                  "type": "text",
-                  "displayName": "Height"
-                }
-              },
               "objectFit": {
                 "value": "contain",
                 "input": {
