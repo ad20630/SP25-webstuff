@@ -71,11 +71,18 @@
                   "displayName": "Height"
                 }
               },
-              "object-fit": {
+              "objectFit": {
                 "value": "contain",
                 "input": {
-                  "type": "text",
-                  "displayName": "Object Fit"
+                  "type": "select",
+                  "displayName": "Object Fit",
+                  "options": [
+                    {"value": "contain", "text": "Contain"},
+                    {"value": "cover", "text": "Cover"},
+                    {"value": "fill", "text": "Fill"},
+                    {"value": "none", "text": "None"},
+                    {"value": "scale-down", "text": "Scale Down"}
+                  ]
                 }
               }
             },

@@ -76,7 +76,13 @@
                 "input": {
                   "type": "select",
                   "displayName": "Object Fit",
-                  "options": ["contain", "cover", "fill", "none", "scale-down"]
+                  "options": [
+                    {"value": "contain", "text": "Contain"},
+                    {"value": "cover", "text": "Cover"},
+                    {"value": "fill", "text": "Fill"},
+                    {"value": "none", "text": "None"},
+                    {"value": "scale-down", "text": "Scale Down"}
+                  ]
                 }
               }
             },
