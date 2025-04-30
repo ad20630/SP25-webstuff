@@ -12,24 +12,6 @@ const PageHeader = () => {
   const [saveMessage, setSaveMessage] = useState("Save");
   const [loadMessage, setLoadMessage] = useState("Load");
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Undo: Ctrl+Z
-      if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
-        e.preventDefault();
-        editorDispatch({ type: ActionType.UNDO });
-      }
-      // Redo: Ctrl+Y or Ctrl+Shift+Z
-      if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'z')) {
-        e.preventDefault();
-        editorDispatch({ type: ActionType.REDO });
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [editorDispatch]);
-
   const handleSaveClick = () => {
     saveToFile(currentPage.toString());
     setSaveMessage("Saved!");
@@ -42,14 +24,6 @@ const PageHeader = () => {
     loadFromFile();
     setLoadMessage("Loaded!");
     setTimeout(() => setLoadMessage("Load"), 2000);
-  };
-
-  const handleUndoClick = () => {
-    editorDispatch({ type: ActionType.UNDO });
-  };
-
-  const handleRedoClick = () => {
-    editorDispatch({ type: ActionType.REDO });
   };
 
   const currentPageData = pages.find((page) => page.id === currentPage);
@@ -98,20 +72,6 @@ const PageHeader = () => {
       </div>
 
       <div className="header-right">
-        <button 
-          className="undo-button" 
-          onClick={handleUndoClick}
-          disabled={editorState.historyIndex <= 0}
-        >
-          Undo
-        </button>
-        <button 
-          className="redo-button" 
-          onClick={handleRedoClick}
-          disabled={editorState.historyIndex >= editorState.history.length - 1}
-        >
-          Redo
-        </button>
         <button className="save-button" onClick={handleSaveClick}>
           {saveMessage}
         </button>

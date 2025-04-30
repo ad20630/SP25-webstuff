@@ -1,3 +1,4 @@
+
 // #region reducer definition
 
 import { Key, useContext } from "react";
@@ -12,7 +13,6 @@ import { handleDeleteAction } from "./actionHandlers/DeleteHandler";
 import { MouseState } from "state/mouse/MouseReducer";
 import { handleCopyAction } from "./actionHandlers/copyHandler";
 import { handleLoadStateAction } from "./actionHandlers/LoadStateHandler";
-import { handleUndoRedoAction } from "./actionHandlers/UndoRedoHandler";
 import { handleAddAction } from "./actionHandlers/addHandler";
 import { handleResizeAction } from "./actionHandlers/ResizeHandler";
 import { handleAttributeAction } from "./actionHandlers/AttributeHandler";
@@ -71,14 +71,12 @@ export type EditorAction =
   | { type: ActionType.DELETE_ELEMENT; elementId: string }
   | { type: ActionType.COPY_ELEMENT; elementId: string }
   | { type: ActionType.VIEW_CODE; elementId: string }
-  | { type: ActionType.ATTRIBUTE_CHANGED; target:"style"|"attributes"; attribute:string; newValue:string }
   | { type: ActionType.UPDATE_SEO_METADATA; metadata: any }
-  | { type: ActionType.LOAD_STATE; payload: EditorState }
   | { type: ActionType.ADD_ELEMENT; elementId: string}
   | { type: ActionType.ADD_COLUMN; elementId: string}
   | { type: ActionType.RESIZE_ELEMENT; elementId: string; width: number; height: number }
-  | { type: ActionType.UNDO }
-  | { type: ActionType.REDO }
+  | { type: ActionType.ATTRIBUTE_CHANGED; target:"style"|"attributes"; attribute:string; newValue:string }
+  | { type: ActionType.LOAD_STATE; payload: EditorState };
 
 
 export type EditorState = {
@@ -106,69 +104,6 @@ export type DropTargetData = {
 
 // Define a reducer to manage the state of the editor
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
-  let newState = state;
-  
-  // Handle undo/redo actions first
-  if (action.type === ActionType.UNDO || action.type === ActionType.REDO) {
-    return handleUndoRedoAction(state, action);
-  }
-
-  // Handle SEO metadata updates
-  if (action.type === ActionType.UPDATE_SEO_METADATA) {
-    newState = {
-      ...state,
-      seoMetadata: action.metadata
-    };
-    
-    // Update history
-    newState.history = [...newState.history.slice(0, newState.historyIndex + 1), newState];
-    newState.historyIndex++;
-    
-    return newState;
-  }
-
-  // Handle attribute changes
-  if (action.type === ActionType.ATTRIBUTE_CHANGED) {
-    const { target, attribute, newValue } = action;
-    const { section, index } = parseId(state.selectedElementId!);
-    const node = state[section].html.nodes[index];
-    
-    // Create a new state with the updated attribute
-    newState = { ...state };
-    
-    // Update the attribute value
-    newState[section].html.nodes[index][target][attribute] = {
-      ...node[target][attribute],
-      value: newValue
-    };
-    
-    // If this is a column direction change, update the metadata and flex-direction
-    if (target === "attributes" && attribute === "className" && 
-        (newValue === "horizontal" || newValue === "vertical")) {
-      const node = newState[section].html.nodes[index];
-      
-      // Update the node's metadata
-      node.metadata = {
-        ...node.metadata,
-        childDirection: newValue
-      };
-      
-      // Update the flex direction in the style
-      node.style = {
-        ...node.style,
-        "flex-direction": {
-          value: newValue === "horizontal" ? "row" : "column",
-          readonly: true
-        }
-      };
-    }
-    
-    // Update history
-    newState.history = [...newState.history.slice(0, newState.historyIndex + 1), newState];
-    newState.historyIndex++;
-    
-    return newState;
-  }
 
   // Group actions for action handler delegation //
   const MouseMovementActions = [
@@ -194,6 +129,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     ActionType.ELEMENT_BLURRED
   ]
 
+  
   const DeleteElementActions = [
     ActionType.DELETE_ELEMENT
   ]
@@ -206,131 +142,70 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     ActionType.LOAD_STATE
   ]
 
-  const ResizeElementActions = [
-    ActionType.RESIZE_ELEMENT
-  ]
-
-  if (MouseMovementActions.includes(action.type)) {
-    newState = handleMouseMovementAction(state, action);
-  } else if (DragAndDropActions.includes(action.type)) {
-    newState = handleDragAndDropAction(state, action);
-  } else if (DataFetchingActions.includes(action.type)) {
-    newState = handleDataFetchingAction(state, action);
-  } else if (FocusedElementActions.includes(action.type)) {
-    newState = handleFocusedElementAction(state, action);
-  } else if (DeleteElementActions.includes(action.type)) {
-    newState = handleDeleteAction(state, action);
-  } else if (CopyElementActions.includes(action.type)) {
-    newState = handleCopyAction(state, action);
-  } else if (LoadStateActions.includes(action.type)) {
-    newState = handleLoadStateAction(state, action);
-  } else if (ResizeElementActions.includes(action.type)) {
-    newState = handleResizeAction(state, action);
-  } else if (action.type === ActionType.ADD_COLUMN) {
-    const { elementId } = action;
-    const { section, index } = parseId(elementId);
-    const container = state[section].html.nodes[index];
-    
-    if (container && (container.metadata?.childDirection === "horizontal" || container.metadata?.childDirection === "vertical")) {
-      // Create a new column
-      const newColumn: StorableHtmlNode = {
-        element: "div",
-        attributes: {
-          className: {
-            value: container.metadata?.childDirection === "horizontal" ? "vertical" : "horizontal",
-            readonly: true,
-            input: {
-              type: "text",
-              displayName: "Class Name",
-              tooltip: "This cannot be changed."
-            }
-          }
-        },
-        style: {
-          "background-color": {
-            value: "",
-            input: {
-              type: "color",
-              displayName: "Background Color"
-            }
-          },
-          "border-color": {
-            value: "",
-            input: {
-              type: "color",
-              displayName: "Border Color"
-            }
-          },
-          "border-style": {
-            value: "",
-            input: {
-              type: "select",
-              displayName: "Border Style",
-              options: [
-                { value: "none", text: "None" },
-                { value: "solid", text: "Solid" },
-                { value: "double", text: "Double" },
-                { value: "dotted", text: "Dotted" },
-                { value: "dashed", text: "Dashed" },
-                { value: "groove", text: "Grooved" },
-                { value: "ridge", text: "Ridged" },
-                { value: "inset", text: "Inset" },
-                { value: "outset", text: "Outset" },
-                { value: "hidden", text: "Hidden" }
-              ]
-            }
-          },
-          "border-width": {
-            value: "",
-            input: {
-              type: "select",
-              displayName: "Border Thickness",
-              options: [
-                { value: "0px", text: "Invisible" },
-                { value: "1px", text: "Extra Thin" },
-                { value: "2.5px", text: "Thin" },
-                { value: "3.5px", text: "Standard" },
-                { value: "4.5px", text: "Thick" },
-                { value: "6px", text: "Extra Thick" }
-              ]
-            }
-          }
-        },
-        children: [],
-        metadata: {
-          draggable: true,
-          droppable: true,
-          childDirection: container.metadata?.childDirection === "horizontal" ? "vertical" : "horizontal",
-          selectable: true
-        }
-      };
-
-      // Add the new column to the container's children
-      newState = { ...state };
-      if (newState[section]?.html?.nodes?.[index]?.children) {
-        newState[section].html.nodes[index].children.push(newState[section].html.nodes.length);
-        newState[section].html.nodes.push(newColumn);
-
-        // Update history
-        newState.history = [...newState.history.slice(0, newState.historyIndex + 1), newState];
-        newState.historyIndex++;
-      }
+  if(MouseMovementActions.includes(action.type)){
+    return handleMouseMovementAction(state, action)
+  } else
+  {
+    if(DragAndDropActions.includes(action.type)){
+      return handleDragAndDropAction(state, action)
+    } else
+    if(DataFetchingActions.includes(action.type)){
+      return handleDataFetchingAction(state, action)
+    } else
+    if(FocusedElementActions.includes(action.type)){
+      return handleFocusedElementAction(state, action)
+    } else
+    if(DeleteElementActions.includes(action.type)){
+      return handleDeleteAction(state, action)
+    }
+    if(CopyElementActions.includes(action.type)){
+      return handleCopyAction(state, action)
+    }
+    if(LoadStateActions.includes(action.type)){
+      return handleLoadStateAction(state, action)
     }
   }
 
-  // Update history for all actions except undo/redo
-  if (![ActionType.UNDO, ActionType.REDO].includes(action.type)) {
-    const historyEntry = { ...newState, history: [], historyIndex: 0 };
-    const newHistory = [...state.history.slice(0, state.historyIndex + 1), historyEntry];
+  if(action.type === ActionType.ATTRIBUTE_CHANGED){
+    if(!state.selectedElementId){
+      return state;
+    }
+
+    console.log("attribute ", action.attribute)
+    console.log('target id', state.selectedElementId)
+
+    const {section, index} = parseId(state.selectedElementId)
+
+    const primaryIndex = findPrimaryNode(index, state, section)
+
+    const node = state[section].html.nodes[primaryIndex ?? index]
+
+    const attr = node[action.target][action.attribute]
     
-    return {
-      ...newState,
-      history: newHistory,
-      historyIndex: newHistory.length - 1
-    };
+    let sanitizedValue;
+    switch(action.attribute) {
+      case 'className':
+        sanitizedValue = sanitizeClassName(action.newValue, attr.value);
+        break;
+      case 'height':
+      case 'width':
+        sanitizedValue = sanitizeWidthOrHeight(action.newValue, attr.value);
+        break;
+      case 'src':
+        sanitizedValue = sanitizeImageUrl(action.newValue, attr.value);
+        break;
+      default:
+        sanitizedValue = action.newValue; // Default case if no specific sanitization is needed
+    }
+  
+    if(attr){
+      attr.value = sanitizedValue;
+    }
+
+    return {...state}
   }
 
-  return newState;
+  return state;
 }
 
  
