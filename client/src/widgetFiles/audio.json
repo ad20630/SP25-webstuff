@@ -63,13 +63,6 @@
               "controls": {"value": "true", "hidden": true}
             },
             "style": {
-              "width": {
-                "value": "100%",
-                "input": {
-                  "type": "text",
-                  "displayName": "Width"
-                }
-              }
             },
             "metadata": {
               "selectable": true,
