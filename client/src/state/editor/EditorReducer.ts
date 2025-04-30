@@ -51,8 +51,6 @@ export enum ActionType {
 
   ATTRIBUTE_CHANGED = "ATTRIBUTE_CHANGED",
   UPDATE_SEO_METADATA = "UPDATE_SEO_METADATA",
-  UNDO = "UNDO",
-  REDO = "REDO"
 }
 
 export type EditorAction =
@@ -141,6 +139,9 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
   const LoadStateActions = [
     ActionType.LOAD_STATE
   ]
+  const ResizeElementActions = [
+    ActionType.RESIZE_ELEMENT
+  ]
 
   if(MouseMovementActions.includes(action.type)){
     return handleMouseMovementAction(state, action)
@@ -164,7 +165,9 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     if(LoadStateActions.includes(action.type)){
       return handleLoadStateAction(state, action)
     }
-  }
+   if(ResizeElementActions.includes(action.type)){
+    return handleResizeAction(state, action);
+  }}
 
   if(action.type === ActionType.ATTRIBUTE_CHANGED){
     if(!state.selectedElementId){
@@ -187,10 +190,10 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       case 'className':
         sanitizedValue = sanitizeClassName(action.newValue, attr.value);
         break;
-      case 'height':
+      /*case 'height':
       case 'width':
         sanitizedValue = sanitizeWidthOrHeight(action.newValue, attr.value);
-        break;
+        break;*/ //Height and Width sanitization currently breaks editing of these values
       case 'src':
         sanitizedValue = sanitizeImageUrl(action.newValue, attr.value);
         break;
