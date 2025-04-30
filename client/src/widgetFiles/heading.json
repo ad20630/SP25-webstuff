@@ -56,6 +56,18 @@
                             ]
                         }
                     },
+                    "text-align":{
+                        "value":"center",
+                        "input":{
+                            "type": "select",
+                            "displayName": "Text Alignment",
+                            "options":[
+                                {"value": "center", "text": "Center"},
+                                {"value": "left", "text": "Left"},
+                                {"value": "right", "text": "Right"}
+                            ]
+                        }
+                    },
                     "color":{
                         "value": "",
                         "input": {
@@ -133,7 +145,7 @@
                         }
                     },
                     "className": {
-                        "value": "heading1",
+                        "value": "heading",
                         "readonly": true,
                         "input": {
                             "type": "select",
