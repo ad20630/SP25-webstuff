@@ -103,6 +103,7 @@ const ElementSidebar = (props: Props) => {
         <select
           name=""
           id=""
+          value = {val.value}
           onChange={(ev: ChangeEvent<HTMLSelectElement>) => {
             dispatch({
               type: ActionType.ATTRIBUTE_CHANGED,
