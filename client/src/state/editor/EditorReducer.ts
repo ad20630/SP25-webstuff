@@ -298,7 +298,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
   ];
 
   if (undoableActions.includes(action.type)) {
-    return saveToHistory(newState);
+    return saveToHistory(newState, action);
   }
 
   return newState;
