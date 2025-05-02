@@ -1,7 +1,29 @@
 import { ActionType, EditorAction, EditorState } from "../EditorReducer";
+import { parseId } from "../Helpers";
+
+// Helper function to check if a node is a textbox widget
+function isTextboxWidget(node: any): boolean {
+  return node?.metadata?.textbox === true;
+}
+
+// Helper function to check if an attribute change is for a textbox widget
+function isTextboxAttributeChange(state: EditorState, action: EditorAction): boolean {
+  if (action.type !== ActionType.ATTRIBUTE_CHANGED || !state.selectedElementId) {
+    return false;
+  }
+
+  const { section, index } = parseId(state.selectedElementId);
+  const node = state[section].html.nodes[index];
+  return isTextboxWidget(node);
+}
 
 // Helper function to save state to history
-export function saveToHistory(state: EditorState): EditorState {
+export function saveToHistory(state: EditorState, action: EditorAction): EditorState {
+  // Skip saving to history for textbox attribute changes
+  if (isTextboxAttributeChange(state, action)) {
+    return state;
+  }
+
   // Create a deep copy of the current state
   const newState = JSON.parse(JSON.stringify(state));
   
