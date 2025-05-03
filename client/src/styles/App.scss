@@ -1,3 +1,4 @@
+@use "Editor";
 @import "../../node_modules/@syncfusion/ej2-base/styles/material.css";
 @import "../../node_modules/@syncfusion/ej2-inputs/styles/material.css";
 @import "../../node_modules/@syncfusion/ej2-popups/styles/material.css";
@@ -95,12 +96,25 @@ div.body-root{
 
 .icon {
   cursor: pointer;
-  width: 16px;
-  height: 16px;
-  background-color: #fff;
-  border-radius: 2px;
+  width: 25px;
+  height: 20px;
+  background-color: #70a3e2;
+  border: 2px solid #04489b;
+  border-radius: 4px;
   padding: 2px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #4a8cd8;
+    border-color: #4a8cd8;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: white;
+  }
 }
 
 // Image aspect ratio preservation
@@ -123,5 +137,42 @@ div.body-root{
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+}
+
+div.widget{
+  background-color: lightgray;
+  user-select: none;
+  &:hover{
+    cursor: pointer;
+    background-color: gray;
+  }
+}
+
+.auth-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  
+  .toggle-button {
+    background: none;
+    border: none;
+    color: #0066cc;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0.5rem 1rem;
+    transition: color 0.2s;
+    
+    &:hover {
+      color: #0055aa;
+    }
+    
+    &:focus {
+      outline: none;
+    }
   }
 }
