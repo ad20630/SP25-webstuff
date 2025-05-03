@@ -468,33 +468,3 @@ div.selected-element-ops{
   border-color: #2196f3;
   color: #1976d2;
 }
-
-// Resize handle styles
-.react-resizable {
-  position: relative;
-}
-
-.react-resizable-handle {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  bottom: 0;
-  right: 0;
-  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjgwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA2IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+');
-  background-position: bottom right;
-  background-repeat: no-repeat;
-  padding: 0 3px 3px 0;
-  background-origin: content-box;
-  box-sizing: border-box;
-  cursor: se-resize;
-  z-index: 100;
-  border: 2px solid #70a3e2;
-  border-radius: 4px;
-  background-color: rgba(112, 163, 226, 0.2);
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: rgba(112, 163, 226, 0.4);
-    border-color: #4a8cd8;
-  }
-}

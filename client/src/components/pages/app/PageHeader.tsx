@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useEditor } from "state/editor/EditorReducer";
 import { ActionType } from "state/editor/EditorReducer";
 import { usePages } from "state/pages/PagesContext";
-import { useUndoRedo } from "state/editor/useUndoRedo";
 
 const PageHeader = () => {
   const { saveToFile, loadFromFile, loadFromLocalStorage } = useSaveLoadActions();
@@ -12,9 +11,6 @@ const PageHeader = () => {
   const { pages, currentPage, setCurrentPage } = usePages();
   const [saveMessage, setSaveMessage] = useState("Save");
   const [loadMessage, setLoadMessage] = useState("Load");
-
-  // Initialize undo/redo functionality
-  useUndoRedo();
 
   const handleSaveClick = () => {
     saveToFile(currentPage.toString());
@@ -28,14 +24,6 @@ const PageHeader = () => {
     loadFromFile();
     setLoadMessage("Loaded!");
     setTimeout(() => setLoadMessage("Load"), 2000);
-  };
-
-  const handleUndo = () => {
-    editorDispatch({ type: ActionType.UNDO });
-  };
-
-  const handleRedo = () => {
-    editorDispatch({ type: ActionType.REDO });
   };
 
   const currentPageData = pages.find((page) => page.id === currentPage);
@@ -84,20 +72,6 @@ const PageHeader = () => {
       </div>
 
       <div className="header-right">
-        <button
-          className="undo-button"
-          onClick={handleUndo}
-          disabled={editorState.historyIndex <= 0}
-        >
-          Undo
-        </button>
-        <button
-          className="redo-button"
-          onClick={handleRedo}
-          disabled={editorState.historyIndex >= editorState.history.length - 1}
-        >
-          Redo
-        </button>
         <button className="save-button" onClick={handleSaveClick}>
           {saveMessage}
         </button>

@@ -1,3 +1,4 @@
+
 // #region reducer definition
 
 import { Key, useContext } from "react";
@@ -18,7 +19,6 @@ import { handleAttributeAction } from "./actionHandlers/AttributeHandler";
 import { DragAndDropState } from "state/dragAndDrop/DragAndDropReducer";
 import { parseId } from "./Helpers";
 import { findPrimaryNode, sanitizeClassName, sanitizeImageUrl, sanitizeWidthOrHeight } from "components/pages/app/Helpers";
-import { handleHistoryAction, saveToHistory } from "./actionHandlers/HistoryHandler";
 
 
 // #region type and constant definitions
@@ -51,8 +51,6 @@ export enum ActionType {
 
   ATTRIBUTE_CHANGED = "ATTRIBUTE_CHANGED",
   UPDATE_SEO_METADATA = "UPDATE_SEO_METADATA",
-  UNDO = "UNDO",
-  REDO = "REDO",
 }
 
 export type EditorAction =
@@ -76,9 +74,7 @@ export type EditorAction =
   | { type: ActionType.ADD_COLUMN; elementId: string}
   | { type: ActionType.RESIZE_ELEMENT; elementId: string; width: number; height: number }
   | { type: ActionType.ATTRIBUTE_CHANGED; target:"style"|"attributes"; attribute:string; newValue:string }
-  | { type: ActionType.LOAD_STATE; payload: EditorState }
-  | { type: ActionType.UNDO }
-  | { type: ActionType.REDO };
+  | { type: ActionType.LOAD_STATE; payload: EditorState };
 
 
 export type EditorState = {
@@ -106,11 +102,8 @@ export type DropTargetData = {
 
 // Define a reducer to manage the state of the editor
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
-  // Handle undo/redo actions first
-  if (action.type === ActionType.UNDO || action.type === ActionType.REDO) {
-    return handleHistoryAction(state, action);
-  }
 
+  
   // Group actions for action handler delegation //
   const MouseMovementActions = [
     ActionType.HOVER,
@@ -151,25 +144,32 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
     ActionType.RESIZE_ELEMENT
   ]
 
-  let newState: EditorState;
-
   if(MouseMovementActions.includes(action.type)){
-    newState = handleMouseMovementAction(state, action)
-  } else if(DragAndDropActions.includes(action.type)){
-    newState = handleDragAndDropAction(state, action)
-  } else if(DataFetchingActions.includes(action.type)){
-    newState = handleDataFetchingAction(state, action)
-  } else if(FocusedElementActions.includes(action.type)){
-    newState = handleFocusedElementAction(state, action)
-  } else if(DeleteElementActions.includes(action.type)){
-    newState = handleDeleteAction(state, action)
-  } else if(CopyElementActions.includes(action.type)){
-    newState = handleCopyAction(state, action)
-  } else if(LoadStateActions.includes(action.type)){
-    newState = handleLoadStateAction(state, action)
-  } else if(ResizeElementActions.includes(action.type)){
-    newState = handleResizeAction(state, action);
-  } else if(action.type === ActionType.ADD_COLUMN){
+    return handleMouseMovementAction(state, action)
+  } else
+  {
+    if(DragAndDropActions.includes(action.type)){
+      return handleDragAndDropAction(state, action)
+    } else
+    if(DataFetchingActions.includes(action.type)){
+      return handleDataFetchingAction(state, action)
+    } else
+    if(FocusedElementActions.includes(action.type)){
+      return handleFocusedElementAction(state, action)
+    } else
+    if(DeleteElementActions.includes(action.type)){
+      return handleDeleteAction(state, action)
+    }
+    if(CopyElementActions.includes(action.type)){
+      return handleCopyAction(state, action)
+    }
+    if(LoadStateActions.includes(action.type)){
+      return handleLoadStateAction(state, action)
+    }
+   if(ResizeElementActions.includes(action.type)){
+    return handleResizeAction(state, action);
+  }
+  if(action.type === ActionType.ADD_COLUMN){
     const { elementId } = action;
     const { section, index } = parseId(elementId);
     const container = state[section].html.nodes[index];
@@ -249,19 +249,25 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       if (state[section].html.nodes[index].children) {
         state[section].html.nodes[index].children.push(state[section].html.nodes.length);
       }
-      state[section].html.nodes.push(newColumn);
-      newState = {...state};
-    } else {
-      newState = state;
-    }
-  } else if(action.type === ActionType.ATTRIBUTE_CHANGED){
+        state[section].html.nodes.push(newColumn);
+  }
+}
+}
+  
+  if(action.type === ActionType.ATTRIBUTE_CHANGED){
     if(!state.selectedElementId){
       return state;
     }
 
+    console.log("attribute ", action.attribute)
+    console.log('target id', state.selectedElementId)
+
     const {section, index} = parseId(state.selectedElementId)
+
     const primaryIndex = findPrimaryNode(index, state, section)
+
     const node = state[section].html.nodes[primaryIndex ?? index]
+
     const attr = node[action.target][action.attribute]
     
     let sanitizedValue;
@@ -269,39 +275,25 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       case 'className':
         sanitizedValue = sanitizeClassName(action.newValue, attr.value);
         break;
+      /*case 'height':
+      case 'width':
+        sanitizedValue = sanitizeWidthOrHeight(action.newValue, attr.value);
+        break;*/ //Height and Width sanitization currently breaks editing of these values
       case 'src':
         sanitizedValue = sanitizeImageUrl(action.newValue, attr.value);
         break;
       default:
-        sanitizedValue = action.newValue;
+        sanitizedValue = action.newValue; // Default case if no specific sanitization is needed
     }
   
     if(attr){
       attr.value = sanitizedValue;
     }
 
-    newState = {...state};
-  } else {
-    newState = state;
+    return {...state}
   }
 
-  // Save state to history for undoable actions
-  const undoableActions = [
-    ActionType.DROP,
-    ActionType.DELETE_ELEMENT,
-    ActionType.COPY_ELEMENT,
-    ActionType.ADD_ELEMENT,
-    ActionType.ADD_COLUMN,
-    ActionType.RESIZE_ELEMENT,
-    ActionType.ATTRIBUTE_CHANGED,
-    ActionType.LOAD_STATE
-  ];
-
-  if (undoableActions.includes(action.type)) {
-    return saveToHistory(newState, action);
-  }
-
-  return newState;
+  return state;
 }
 
  
